@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './colors.scss';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { createGlobalStyle } from 'styled-components';
+
+import Navigation from './routes/navigation/navigation';
+import Home from './routes/home/home';
+import { Fragment } from 'react';
+import SignIn from './components/sign-in/sign-in';
+
+const GlobalStyle = createGlobalStyle`
+* {
+  box-sizing: border-box;
+  margin: 0;
 }
+html, body {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: $dark;
+}
+`;
+
+const App = () => {
+  return (
+    <Fragment>
+      <GlobalStyle />
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigation />}>
+              <Route index element={<Home />} />
+              <Route path="auth" element={<SignIn />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </Fragment>
+  );
+};
 
 export default App;
