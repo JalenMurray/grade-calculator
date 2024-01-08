@@ -1,12 +1,18 @@
-import { useContext, useEffect, useState } from 'react';
-import { AssignmentContainer, Name, Score, Weight } from './assignment.styles';
-import { Row, Col, Container } from 'react-bootstrap';
+import { useContext, useEffect, useState, Fragment } from 'react';
 import { BASE_URL } from '../../../utils/settings';
 import axios from 'axios';
+
+// Contexts
 import { ClassContext } from '../../../contexts/class';
 
+// Components
+import { Option, DynamicValue } from './assignment.styles';
+import { Row, Col, Container } from 'react-bootstrap';
+import AssignmentInput from '../assignment-input/assignment-input';
+import Dropdown from '../../dropdown/dropdown';
+
 const Assignment = ({ atId, aIdx }) => {
-  const { assignmentTypes, updateAssignment } = useContext(ClassContext);
+  const { assignmentTypes, updateAssignment, removeAssignment } = useContext(ClassContext);
   const [assignment, setAssignment] = useState({});
   const [name, setName] = useState('');
   const [score, setScore] = useState(0.0);
@@ -39,77 +45,105 @@ const Assignment = ({ atId, aIdx }) => {
     }
   }, [weightedScore]);
 
+  const INPUT_SETTERS = {
+    score: setScore,
+    max_score: setMaxScore,
+    weight: setWeight,
+  };
+
+  const FORMAT_LENGTH = {
+    score: 2,
+    max_score: 2,
+    weight: 4,
+  };
+
   const formatFloat = (num, n) => {
     if (num) {
-      return parseFloat(num.toFixed(n));
+      if (typeof num == 'string') {
+        return parseFloat(parseFloat(num).toFixed(n));
+      } else {
+        return parseFloat(num.toFixed(n));
+      }
     }
-    return num;
+    return 0.0;
   };
 
-  const updatedFloat = (n) => {
-    if (n) {
-      return parseFloat(n);
-    } else {
-      return 0.0;
-    }
-  };
-
-  const handleBlur = async (e) => {
+  const handleFloatChange = (e) => {
     const { name, value } = e.target;
+    const length = FORMAT_LENGTH[name];
+    const newFloat = formatFloat(value, length);
+    INPUT_SETTERS[name](newFloat);
+    updateAssignment(atId, aIdx, name, newFloat);
+  };
+
+  const handleDelete = async () => {
     const url = `${BASE_URL}classes/assignments/${assignment.id}/`;
-    const toUpdate = { [name]: value };
-    console.log(toUpdate);
     try {
-      const response = await axios.patch(url, toUpdate);
+      const response = await axios.delete(url);
     } catch (error) {
       console.log('Error Editing Assignment:', error);
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name == 'score') {
-      setScore(updatedFloat(value));
-    } else if (name == 'max_score') {
-      setMaxScore(updatedFloat(value));
-    }
-    updateAssignment(atId, aIdx, name, updatedFloat(value));
+    removeAssignment(atId, aIdx);
   };
 
   return (
     <Container fluid>
       <Row>
         <Col lg="2">
-          <Name>{name}</Name>
+          <AssignmentInput
+            assignmentId={assignment.id}
+            inputType={'text'}
+            name={'name'}
+            value={name || ''}
+            onChange={(e) => setName(e.target.value)}
+          />
         </Col>
         <Col lg="4">
-          <Score
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*[.,]?[0-9]+"
-            name="score"
-            value={score || 0.0}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          ></Score>
-          /
-          <Score
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*[.,]?[0-9]+"
-            name="max_score"
-            value={maxScore || 0.0}
-            onChange={handleChange}
-          ></Score>
+          <Row>
+            <Col lg="3">
+              <AssignmentInput
+                assignmentId={assignment.id}
+                inputType={'num'}
+                name={'score'}
+                value={score || 0.0}
+                onChange={handleFloatChange}
+              />
+            </Col>
+            <Col lg="3">/</Col>
+            <Col lg="3">
+              <AssignmentInput
+                assignmentId={assignment.id}
+                inputType={'num'}
+                name={'max_score'}
+                value={maxScore || 0.0}
+                onChange={handleFloatChange}
+              />
+            </Col>
+          </Row>
         </Col>
         <Col lg="2">
-          <Weight>{formatFloat(weight, 4)}</Weight>
+          <AssignmentInput
+            assignmentId={assignment.id}
+            inputType={'num'}
+            name={'weight'}
+            value={weight || 0.0}
+            onChange={handleFloatChange}
+          />
         </Col>
         <Col lg="2">
-          <Weight>{formatFloat(weightedScore, 4)}</Weight>
+          <DynamicValue>{formatFloat(weightedScore, 4)}</DynamicValue>
         </Col>
-        <Col lg="2">
-          <Weight>{formatFloat(lostPoints, 2)}</Weight>
+        <Col lg="1">
+          <DynamicValue>{formatFloat(lostPoints, 2)}</DynamicValue>
+        </Col>
+        <Col lg="1">
+          <Dropdown
+            children={
+              <Fragment>
+                <Option onClick={handleDelete}>Delete</Option>
+              </Fragment>
+            }
+          />
         </Col>
       </Row>
     </Container>

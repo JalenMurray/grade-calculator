@@ -16,4 +16,10 @@ export const Score = styled.input`
   margin-right: 15px;
 `;
 
-export const Weight = styled.h4``;
+export const DynamicValue = styled.span`
+  font-size: 1.5rem;
+`;
+
+export const Option = styled.span`
+  font-size: 1rem;
+`;

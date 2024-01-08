@@ -1,15 +1,20 @@
-import { AddButton, AssignmentsContainer } from './assignment-section.styles';
-import Assignment from '../assignment/assignment';
+import { useContext, useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../../utils/settings';
 
-import { AddCircleOutline } from '@mui/icons-material';
-import { useContext, useEffect, useState } from 'react';
-import { Row, Col } from 'react-bootstrap';
+// Contexts
 import { ClassContext } from '../../../contexts/class';
 
+// Components
+import { AddButton, AssignmentsContainer } from './assignment-section.styles';
+import { Option } from '../assignment/assignment.styles';
+import { AddCircleOutline } from '@mui/icons-material';
+import { Row, Col } from 'react-bootstrap';
+import Assignment from '../assignment/assignment';
+import Dropdown from '../../dropdown/dropdown';
+
 const AssignmentSection = ({ atId }) => {
-  const { assignmentTypes } = useContext(ClassContext);
+  const { assignmentTypes, addAssignment } = useContext(ClassContext);
   const [assignmentType, setAssignmentType] = useState({});
   const [name, setName] = useState('');
   const [totalScore, setTotalScore] = useState(0.0);
@@ -19,7 +24,7 @@ const AssignmentSection = ({ atId }) => {
 
   useEffect(() => {
     setAssignmentType(assignmentTypes[atId]);
-  }, []);
+  }, [assignmentTypes]);
 
   useEffect(() => {
     setName(assignmentType.name);
@@ -48,7 +53,9 @@ const AssignmentSection = ({ atId }) => {
     const url = `${BASE_URL}classes/assignments/`;
     try {
       const response = await axios.post(url, newAssignment);
-      console.log(response);
+      const data = response.data;
+      console.log(data);
+      addAssignment(id, data);
     } catch (error) {
       console.error('Error creating assignment:', error);
     }
@@ -70,8 +77,17 @@ const AssignmentSection = ({ atId }) => {
             {updatedFloat(totalScore)} / {updatedFloat(maxTotalScore)}
           </h4>
         </Col>
-        <Col className="pt-2" lg="2">
+        <Col className="pt-2" lg="1">
           <h4>{updatedFloat(lostPoints)}</h4>
+        </Col>
+        <Col lg="1">
+          <Dropdown
+            children={
+              <Fragment>
+                <Option>Balance Weights</Option>
+              </Fragment>
+            }
+          />
         </Col>
       </Row>
       <hr />

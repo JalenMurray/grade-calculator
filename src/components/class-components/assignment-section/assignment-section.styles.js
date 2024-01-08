@@ -7,4 +7,5 @@ export const AssignmentsContainer = styled.div`
 
 export const AddButton = styled.span`
   margin-left: 30px;
+  cursor: pointer;
 `;

@@ -25,12 +25,28 @@ export const ClassProvider = ({ children }) => {
     setScore(newScore);
   }, [assignmentTypes]);
 
+  const updateTypeScores = (updatedAssignments) => {
+    const newTotal = updatedAssignments.reduce((acc, a) => acc + (a.score / a.max_score) * a.weight, 0);
+    const newMax = updatedAssignments.reduce((acc, a) => acc + a.weight, 0);
+    return { total: newTotal, maxTotal: newMax };
+  };
+
   const addAssignment = (atId, assignment) => {
-    const id = assignment.id;
-    const currAssignments = assignmentTypes[atId].assignments;
-    const updatedAssignments = { ...currAssignments, [id]: assignment };
+    const updatedAssignments = assignmentTypes[atId].assignments.push(assignment);
     setAssignmentTypes({ ...assignmentTypes, [atId]: { ...assignmentTypes[atId], assignments: updatedAssignments } });
-    setAssignments({ ...assignments, [id]: assignment });
+  };
+
+  const removeAssignment = (atId, aIdx) => {
+    const currAssignments = assignmentTypes[atId].assignments;
+    const updatedAssignments = currAssignments.filter((_, i) => i != aIdx);
+    const { total, maxTotal } = updateTypeScores(updatedAssignments);
+    const updatedAssignmentType = {
+      ...assignmentTypes[atId],
+      assignments: updatedAssignments,
+      total_score: total,
+      max_total_score: maxTotal,
+    };
+    setAssignmentTypes({ ...assignmentTypes, [atId]: updatedAssignmentType });
   };
 
   const updateAssignment = (atId, aIdx, name, value) => {
@@ -43,16 +59,17 @@ export const ClassProvider = ({ children }) => {
       }
       return a;
     });
-    const newTotal = updatedAssignments.reduce((acc, a) => acc + (a.score / a.max_score) * a.weight, 0);
-    const newMax = updatedAssignments.reduce((acc, a) => acc + a.max_score * a.weight, 0);
+    const { total, maxTotal } = updateTypeScores(updatedAssignments);
     const updatedAssignmentType = {
       ...assignmentTypes[atId],
       assignments: updatedAssignments,
-      total_score: newTotal,
-      max_total_score: newMax,
+      total_score: total,
+      max_total_score: maxTotal,
     };
     setAssignmentTypes({ ...assignmentTypes, [atId]: updatedAssignmentType });
   };
+
+  const balanceWeights = (atId) => {};
 
   const value = {
     name,
@@ -63,6 +80,7 @@ export const ClassProvider = ({ children }) => {
     setAssignmentTypes,
     assignments,
     addAssignment,
+    removeAssignment,
     updateAssignment,
     score,
     setScore,
