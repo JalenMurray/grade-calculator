@@ -4,25 +4,40 @@ import axios from 'axios';
 import { BASE_URL } from '../../../utils/settings';
 
 import { AddCircleOutline } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
+import { ClassContext } from '../../../contexts/class';
 
-const AssignmentSection = ({ assignmentType }) => {
+const AssignmentSection = ({ atId }) => {
+  const { assignmentTypes } = useContext(ClassContext);
+  const [assignmentType, setAssignmentType] = useState({});
   const [name, setName] = useState('');
-  const [maxScore, setMaxScore] = useState(0);
   const [totalScore, setTotalScore] = useState(0.0);
   const [maxTotalScore, setMaxTotalScore] = useState(0.0);
-  const [weight, setWeight] = useState(0.0);
+  const [lostPoints, setLostPoints] = useState(0.0);
   const [assignments, setAssignments] = useState([]);
 
   useEffect(() => {
+    setAssignmentType(assignmentTypes[atId]);
+  }, []);
+
+  useEffect(() => {
     setName(assignmentType.name);
-    setMaxScore(assignmentType.max_score);
     setTotalScore(assignmentType.total_score);
     setMaxTotalScore(assignmentType.max_total_score);
-    setWeight(assignmentType.weight);
     setAssignments(assignmentType.assignments);
   }, [assignmentType]);
+
+  useEffect(() => {
+    setLostPoints(maxTotalScore - totalScore);
+  }, [maxTotalScore, totalScore]);
+
+  const updatedFloat = (n) => {
+    if (n) {
+      return parseFloat(n.toFixed(2));
+    }
+    return '';
+  };
 
   const handleAdd = async () => {
     const id = assignmentType.id;
@@ -33,6 +48,7 @@ const AssignmentSection = ({ assignmentType }) => {
     const url = `${BASE_URL}classes/assignments/`;
     try {
       const response = await axios.post(url, newAssignment);
+      console.log(response);
     } catch (error) {
       console.error('Error creating assignment:', error);
     }
@@ -51,17 +67,16 @@ const AssignmentSection = ({ assignmentType }) => {
         </Col>
         <Col className="pt-2" lg="2">
           <h4>
-            {parseFloat(totalScore.toFixed(2))} / {parseFloat(maxTotalScore.toFixed(2))}
+            {updatedFloat(totalScore)} / {updatedFloat(maxTotalScore)}
           </h4>
         </Col>
         <Col className="pt-2" lg="2">
-          <h4>{parseFloat((maxTotalScore - totalScore).toFixed(2))}</h4>
+          <h4>{updatedFloat(lostPoints)}</h4>
         </Col>
       </Row>
       <hr />
-      {assignments.map((assignment) => (
-        <Assignment key={assignment.name} assignment={assignment} maxScore={maxScore} />
-      ))}
+      {assignments &&
+        assignments.map((assignment, i) => <Assignment key={assignment.id} atId={assignmentType.id} aIdx={i} />)}
     </AssignmentsContainer>
   );
 };

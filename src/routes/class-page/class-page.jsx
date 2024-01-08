@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../utils/settings';
 
@@ -7,34 +7,33 @@ import { ClassPageContainer, AssignmentsContainer, ClassHeader } from './class-p
 import AssignmentSection from '../../components/class-components/assignment-section/assignment-section';
 import ProgressBar from '../../components/progress-bar/progress-bar';
 import { Col, Row } from 'react-bootstrap';
+import { ClassContext } from '../../contexts/class';
 
 const ClassPage = ({ classId }) => {
-  const [data, setData] = useState({});
-  const [name, setName] = useState('');
-  const [semester, setSemester] = useState('');
-  const [score, setScore] = useState(0);
-  const [assignmentTypes, setAssignmentTypes] = useState([]);
+  const { name, setName, semester, setSemester, score, setScore, assignmentTypes, setAssignmentTypes } =
+    useContext(ClassContext);
 
   useEffect(() => {
     const fetchClass = async () => {
       const url = `${BASE_URL}classes/classes/${classId}`;
       try {
         const response = await axios.get(url);
-        setData(response.data);
+        const classData = response.data;
+        const assignmentTypes = classData.assignment_types.reduce((acc, obj) => {
+          acc[obj.id] = { ...obj };
+          return acc;
+        }, {});
+        setName(classData.name);
+        setSemester(classData.semester);
+        setScore(classData.score);
+        setAssignmentTypes(assignmentTypes);
+        console.log(assignmentTypes);
       } catch (error) {
         console.error('Error fetching class:', error);
       }
     };
     fetchClass();
   }, []);
-
-  useEffect(() => {
-    console.log(data);
-    setName(data.name);
-    setSemester(data.semester);
-    setScore(data.score);
-    setAssignmentTypes(data.assignment_types);
-  }, [data]);
 
   return (
     <ClassPageContainer className="text-dark m-4">
@@ -52,8 +51,8 @@ const ClassPage = ({ classId }) => {
           <Col lg="2">Lost Points</Col>
         </Row>
         {assignmentTypes &&
-          assignmentTypes.map((aType) => (
-            <AssignmentSection key={aType.id} assignmentType={aType} className="mb-4"></AssignmentSection>
+          Object.values(assignmentTypes).map((aType) => (
+            <AssignmentSection key={aType.id} atId={aType.id} className="mb-4"></AssignmentSection>
           ))}
       </AssignmentsContainer>
     </ClassPageContainer>

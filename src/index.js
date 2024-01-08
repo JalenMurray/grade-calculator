@@ -7,13 +7,16 @@ import reportWebVitals from './reportWebVitals';
 
 // Context
 import { UserProvider } from './contexts/user';
+import { ClassProvider } from './contexts/class';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <UserProvider>
-        <App />
+        <ClassProvider>
+          <App />
+        </ClassProvider>
       </UserProvider>
     </BrowserRouter>
   </React.StrictMode>
