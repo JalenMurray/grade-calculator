@@ -10,11 +10,15 @@ import UserLogo from '../../components/user-logo/user-logo';
 const Navigation = () => {
   return (
     <Fragment>
-      <Navbar bg="primary" data-bs-theme="dark">
+      <Navbar data-bs-theme="light" style={{ background: '#829191' }}>
         <Navbar.Brand href="/">
           <img src={Logo} width="50" height="50" className="d-inline-block align-top" alt="Logo" />
         </Navbar.Brand>
-        <Nav className="me-auto text-lg"></Nav>
+        <Nav className="me-auto text-lg">
+          <Nav.Link href="/test_class">
+            <NavLinkText>TEST CLASS</NavLinkText>
+          </Nav.Link>
+        </Nav>
         <Nav className="">
           <Nav.Link href="/auth">
             <UserLogo imgUrl={DefaultProfilePic} altTxt={'Jalen Murray'} />
