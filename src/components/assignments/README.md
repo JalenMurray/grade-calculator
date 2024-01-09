@@ -6,6 +6,7 @@ These are components that are used for assignment objects
 | --------------------------------- | ------------------------------------------------------------- |
 | [AssignmentType](#AssignmentType) | Holds information about a specific assignment type. Ex. Essay |
 | [Assignment](#Assignment)         | Holds information about an assignment and allows editing      |
+| [AssignmentInput](#AssignmentInput)| Contains editable logistical information about an assignment |
 
 ## AssignmentType
 
