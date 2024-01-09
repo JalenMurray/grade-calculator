@@ -14,6 +14,7 @@ import Dropdown from '../../dropdown/dropdown';
 const Assignment = ({ atId, aIdx }) => {
   const { assignmentTypes, updateAssignment, removeAssignment } = useContext(ClassContext);
   const [assignment, setAssignment] = useState({});
+  const [id, setId] = useState(0);
   const [name, setName] = useState('');
   const [score, setScore] = useState(0.0);
   const [maxScore, setMaxScore] = useState(0.0);
@@ -26,6 +27,7 @@ const Assignment = ({ atId, aIdx }) => {
   }, []);
 
   useEffect(() => {
+    setId(assignment.id);
     setName(assignment.name);
     setScore(assignment.score);
     setMaxScore(assignment.max_score);
@@ -77,7 +79,7 @@ const Assignment = ({ atId, aIdx }) => {
   };
 
   const handleDelete = async () => {
-    const url = `${BASE_URL}classes/assignments/${assignment.id}/`;
+    const url = `${BASE_URL}classes/assignments/${id}/`;
     try {
       const response = await axios.delete(url);
     } catch (error) {
@@ -91,7 +93,7 @@ const Assignment = ({ atId, aIdx }) => {
       <Row>
         <Col lg="2">
           <AssignmentInput
-            assignmentId={assignment.id}
+            assignmentId={id}
             inputType={'text'}
             name={'name'}
             value={name || ''}
@@ -102,7 +104,7 @@ const Assignment = ({ atId, aIdx }) => {
           <Row>
             <Col lg="3">
               <AssignmentInput
-                assignmentId={assignment.id}
+                assignmentId={id}
                 inputType={'num'}
                 name={'score'}
                 value={score || 0.0}
@@ -112,7 +114,7 @@ const Assignment = ({ atId, aIdx }) => {
             <Col lg="3">/</Col>
             <Col lg="3">
               <AssignmentInput
-                assignmentId={assignment.id}
+                assignmentId={id}
                 inputType={'num'}
                 name={'max_score'}
                 value={maxScore || 0.0}
@@ -123,7 +125,7 @@ const Assignment = ({ atId, aIdx }) => {
         </Col>
         <Col lg="2">
           <AssignmentInput
-            assignmentId={assignment.id}
+            assignmentId={id}
             inputType={'num'}
             name={'weight'}
             value={weight || 0.0}

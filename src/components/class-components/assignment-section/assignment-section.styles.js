@@ -9,3 +9,7 @@ export const AddButton = styled.span`
   margin-left: 30px;
   cursor: pointer;
 `;
+
+export const LockIcon = styled.span`
+  margin-left: 30px;
+`;

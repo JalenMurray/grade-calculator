@@ -6,9 +6,9 @@ import { BASE_URL } from '../../../utils/settings';
 import { ClassContext } from '../../../contexts/class';
 
 // Components
-import { AddButton, AssignmentsContainer } from './assignment-section.styles';
+import { AddButton, AssignmentsContainer, LockIcon } from './assignment-section.styles';
 import { Option } from '../assignment/assignment.styles';
-import { AddCircleOutline } from '@mui/icons-material';
+import { AddCircleOutline, LockOpenRounded, LockRounded } from '@mui/icons-material';
 import { Row, Col } from 'react-bootstrap';
 import Assignment from '../assignment/assignment';
 import Dropdown from '../../dropdown/dropdown';
@@ -21,9 +21,11 @@ const AssignmentSection = ({ atId }) => {
   const [maxTotalScore, setMaxTotalScore] = useState(0.0);
   const [lostPoints, setLostPoints] = useState(0.0);
   const [assignments, setAssignments] = useState([]);
+  const [lockWeights, setLockWeights] = useState(false);
 
   useEffect(() => {
     setAssignmentType(assignmentTypes[atId]);
+    console.log('UPDATED ASSIGNMENT TYPE');
   }, [assignmentTypes]);
 
   useEffect(() => {
@@ -31,6 +33,7 @@ const AssignmentSection = ({ atId }) => {
     setTotalScore(assignmentType.total_score);
     setMaxTotalScore(assignmentType.max_total_score);
     setAssignments(assignmentType.assignments);
+    setLockWeights(assignmentType.lock_weights);
   }, [assignmentType]);
 
   useEffect(() => {
@@ -70,6 +73,10 @@ const AssignmentSection = ({ atId }) => {
             <AddButton>
               <AddCircleOutline onClick={handleAdd} />
             </AddButton>
+            <LockIcon>
+              {lockWeights && <LockRounded />}
+              {!lockWeights && <LockOpenRounded />}
+            </LockIcon>
           </h3>
         </Col>
         <Col className="pt-2" lg="2">

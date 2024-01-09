@@ -17,7 +17,6 @@ export const ClassProvider = ({ children }) => {
   const [name, setName] = useState('');
   const [semester, setSemester] = useState('');
   const [assignmentTypes, setAssignmentTypes] = useState({});
-  const [assignments, setAssignments] = useState({});
   const [score, setScore] = useState(0);
 
   useEffect(() => {
@@ -25,28 +24,55 @@ export const ClassProvider = ({ children }) => {
     setScore(newScore);
   }, [assignmentTypes]);
 
-  const updateTypeScores = (updatedAssignments) => {
+  const getAtScores = (updatedAssignments) => {
     const newTotal = updatedAssignments.reduce((acc, a) => acc + (a.score / a.max_score) * a.weight, 0);
     const newMax = updatedAssignments.reduce((acc, a) => acc + a.weight, 0);
     return { total: newTotal, maxTotal: newMax };
   };
 
+  const getAtWeight = (atId) => {
+    const assignmentType = assignmentTypes[atId];
+    if (assignmentType.lock_weights) {
+      return assignmentType.weight;
+    }
+    return assignmentType.assignments.reduce((acc, a) => acc + a.weight, 0);
+  };
+
+  const getBalancedWeights = (atId, updatedAssignments) => {
+    const assignmentType = assignmentTypes[atId];
+    if (assignmentType.lock_weights) {
+      const currAssignments = assignmentTypes[atId].assignments;
+      const numAssignments = currAssignments.length;
+      const newWeight = assignmentType.weight / numAssignments;
+      return currAssignments.map((a) => ({ ...a, weight: newWeight }));
+    }
+    return updatedAssignments;
+  };
+
+  const updateAssignments = (atId, updatedAssignments) => {
+    const assignmentType = assignmentTypes[atId];
+    const weightedAssignments = getBalancedWeights(atId, updatedAssignments);
+    const atWeight = getAtWeight(atId);
+    const { total, maxTotal } = getAtScores(weightedAssignments);
+    const updatedAssignmentType = {
+      ...assignmentType,
+      assignments: weightedAssignments,
+      total_score: total,
+      max_total_score: maxTotal,
+      weight: atWeight,
+    };
+    setAssignmentTypes({ ...assignmentTypes, [atId]: updatedAssignmentType });
+  };
+
   const addAssignment = (atId, assignment) => {
-    const updatedAssignments = assignmentTypes[atId].assignments.push(assignment);
-    setAssignmentTypes({ ...assignmentTypes, [atId]: { ...assignmentTypes[atId], assignments: updatedAssignments } });
+    const updatedAssignments = [...assignmentTypes[atId].assignments, assignment];
+    updateAssignments(atId, updatedAssignments);
   };
 
   const removeAssignment = (atId, aIdx) => {
     const currAssignments = assignmentTypes[atId].assignments;
     const updatedAssignments = currAssignments.filter((_, i) => i != aIdx);
-    const { total, maxTotal } = updateTypeScores(updatedAssignments);
-    const updatedAssignmentType = {
-      ...assignmentTypes[atId],
-      assignments: updatedAssignments,
-      total_score: total,
-      max_total_score: maxTotal,
-    };
-    setAssignmentTypes({ ...assignmentTypes, [atId]: updatedAssignmentType });
+    updateAssignments(atId, updatedAssignments);
   };
 
   const updateAssignment = (atId, aIdx, name, value) => {
@@ -59,17 +85,8 @@ export const ClassProvider = ({ children }) => {
       }
       return a;
     });
-    const { total, maxTotal } = updateTypeScores(updatedAssignments);
-    const updatedAssignmentType = {
-      ...assignmentTypes[atId],
-      assignments: updatedAssignments,
-      total_score: total,
-      max_total_score: maxTotal,
-    };
-    setAssignmentTypes({ ...assignmentTypes, [atId]: updatedAssignmentType });
+    updateAssignments(atId, updatedAssignments);
   };
-
-  const balanceWeights = (atId) => {};
 
   const value = {
     name,
@@ -78,7 +95,6 @@ export const ClassProvider = ({ children }) => {
     setSemester,
     assignmentTypes,
     setAssignmentTypes,
-    assignments,
     addAssignment,
     removeAssignment,
     updateAssignment,
