@@ -8,7 +8,7 @@ import { ClassContext } from '../../../contexts/class';
 // Components
 import { Option, DynamicValue } from './assignment.styles';
 import { Row, Col, Container } from 'react-bootstrap';
-import AssignmentInput from '../assignment-input/assignment-input';
+import AssignmentInput from '../assignments/assignment-input/assignment-input';
 import Dropdown from '../../dropdown/dropdown';
 
 const Assignment = ({ atId, aIdx }) => {

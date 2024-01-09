@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { BASE_URL } from '../../../utils/settings';
+import { BASE_URL } from '../../../../utils/settings';
 
 // Context
 
 // Components
-import { Input, Header } from '../assignment-input/assignment-input.styles';
+import { Input, Header } from './assignment-input.styles';
 
 const INPUT_TYPE_PROPS = {
   num: { type: 'text', inputMode: 'numeric', pattern: '[0-9]*[.,]?[0-9]+' },
@@ -20,14 +20,12 @@ const AssignmentInput = ({ assignmentId, inputType, ...otherProps }) => {
   useEffect(() => {
     const inputProps = INPUT_TYPE_PROPS[inputType];
     setTypeProps(inputProps);
-  }, []);
+  }, [inputType]);
 
   const handleBlur = async (e) => {
     const { name, value } = e.target;
     const url = `${BASE_URL}classes/assignments/${assignmentId}/`;
     const toUpdate = { [name]: value };
-    console.log(toUpdate);
-    console.log(url);
     try {
       const response = await axios.patch(url, toUpdate);
     } catch (error) {
@@ -38,8 +36,6 @@ const AssignmentInput = ({ assignmentId, inputType, ...otherProps }) => {
 
   const handleClick = () => {
     setIsEditing(true);
-    console.log(inputRef.current);
-    inputRef.current && inputRef.current.select();
   };
 
   return (

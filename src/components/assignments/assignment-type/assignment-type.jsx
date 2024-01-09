@@ -6,14 +6,14 @@ import { BASE_URL } from '../../../utils/settings';
 import { ClassContext } from '../../../contexts/class';
 
 // Components
-import { AddButton, AssignmentsContainer, LockIcon } from './assignment-section.styles';
+import { AddButton, AssignmentsContainer, LockIcon } from './assignment-type.styles';
 import { Option } from '../assignment/assignment.styles';
 import { AddCircleOutline, LockOpenRounded, LockRounded } from '@mui/icons-material';
 import { Row, Col } from 'react-bootstrap';
 import Assignment from '../assignment/assignment';
 import Dropdown from '../../dropdown/dropdown';
 
-const AssignmentSection = ({ atId }) => {
+const AssignmentType = ({ atId }) => {
   const { assignmentTypes, addAssignment } = useContext(ClassContext);
   const [assignmentType, setAssignmentType] = useState({});
   const [name, setName] = useState('');
@@ -25,7 +25,6 @@ const AssignmentSection = ({ atId }) => {
 
   useEffect(() => {
     setAssignmentType(assignmentTypes[atId]);
-    console.log('UPDATED ASSIGNMENT TYPE');
   }, [assignmentTypes]);
 
   useEffect(() => {
@@ -104,4 +103,4 @@ const AssignmentSection = ({ atId }) => {
   );
 };
 
-export default AssignmentSection;
+export default AssignmentType;

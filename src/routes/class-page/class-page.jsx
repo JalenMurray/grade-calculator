@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { BASE_URL } from '../../utils/settings';
+import { useNavigate } from 'react-router-dom';
+import { getClass } from '../../utils/api';
 
 // Components
 import { ClassPageContainer, AssignmentsContainer, ClassHeader } from './class-page.styles';
@@ -12,25 +12,24 @@ import { ClassContext } from '../../contexts/class';
 const ClassPage = ({ classId }) => {
   const { name, setName, semester, setSemester, score, setScore, assignmentTypes, setAssignmentTypes } =
     useContext(ClassContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchClass = async () => {
-      const url = `${BASE_URL}classes/classes/${classId}`;
-      try {
-        const response = await axios.get(url);
-        const classData = response.data;
-        const assignmentTypes = classData.assignment_types.reduce((acc, obj) => {
-          acc[obj.id] = { ...obj };
-          return acc;
-        }, {});
-        setName(classData.name);
-        setSemester(classData.semester);
-        setScore(classData.score);
-        setAssignmentTypes(assignmentTypes);
-        console.log(assignmentTypes);
-      } catch (error) {
-        console.error('Error fetching class:', error);
+      const foundClass = await getClass(1);
+      if (!foundClass) {
+        navigate('/not_found');
+        return;
       }
+
+      const assignmentTypes = foundClass.assignment_types.reduce((acc, obj) => {
+        acc[obj.id] = { ...obj };
+        return acc;
+      }, {});
+      setName(foundClass.name);
+      setSemester(foundClass.semester);
+      setScore(foundClass.score);
+      setAssignmentTypes(assignmentTypes);
     };
     fetchClass();
   }, []);

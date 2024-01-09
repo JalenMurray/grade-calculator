@@ -15,7 +15,7 @@ const getButton = ({ buttonType = BUTTON_TYPE_CLASSES.base }) => {
 
 const Button = ({ children, buttonType, ...otherProps }) => {
   const CustomButton = getButton(buttonType);
-  if (buttonType == 'google') {
+  if (buttonType === 'google') {
     return <GoogleSignInButton />;
   }
   return <CustomButton {...otherProps}>{children}</CustomButton>;
