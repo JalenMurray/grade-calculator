@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState, Fragment } from 'react';
-import { BASE_URL } from '../../../utils/settings';
-import axios from 'axios';
+import { deleteAssignment } from '../../../utils/api';
 
 // Contexts
 import { ClassContext } from '../../../contexts/class';
@@ -8,7 +7,7 @@ import { ClassContext } from '../../../contexts/class';
 // Components
 import { Option, DynamicValue } from './assignment.styles';
 import { Row, Col, Container } from 'react-bootstrap';
-import AssignmentInput from '../assignments/assignment-input/assignment-input';
+import AssignmentInput from '../assignment-input/assignment-input';
 import Dropdown from '../../dropdown/dropdown';
 
 const Assignment = ({ atId, aIdx }) => {
@@ -21,10 +20,18 @@ const Assignment = ({ atId, aIdx }) => {
   const [weight, setWeight] = useState(0.0);
   const [weightedScore, setWeightedScore] = useState(0);
   const [lostPoints, setLostPoints] = useState(0);
+  const [weightLocked, setWeightLocked] = useState(false);
 
   useEffect(() => {
-    setAssignment(assignmentTypes[atId].assignments[aIdx]);
-  }, []);
+    const currAssignmentType = assignmentTypes[atId];
+    if (currAssignmentType) {
+      setWeightLocked(currAssignmentType.lock_weights);
+      const currAssignment = currAssignmentType.assignments[aIdx];
+      if (currAssignment) {
+        setAssignment(currAssignment);
+      }
+    }
+  }, [assignmentTypes, atId, aIdx]);
 
   useEffect(() => {
     setId(assignment.id);
@@ -51,6 +58,7 @@ const Assignment = ({ atId, aIdx }) => {
     score: setScore,
     max_score: setMaxScore,
     weight: setWeight,
+    name: setName,
   };
 
   const FORMAT_LENGTH = {
@@ -78,13 +86,14 @@ const Assignment = ({ atId, aIdx }) => {
     updateAssignment(atId, aIdx, name, newFloat);
   };
 
+  const handleStringChange = (e) => {
+    const { name, value } = e.target;
+    INPUT_SETTERS[name](value);
+    updateAssignment(atId, aIdx, name, value);
+  };
+
   const handleDelete = async () => {
-    const url = `${BASE_URL}classes/assignments/${id}/`;
-    try {
-      const response = await axios.delete(url);
-    } catch (error) {
-      console.log('Error Editing Assignment:', error);
-    }
+    await deleteAssignment(id);
     removeAssignment(atId, aIdx);
   };
 
@@ -97,7 +106,7 @@ const Assignment = ({ atId, aIdx }) => {
             inputType={'text'}
             name={'name'}
             value={name || ''}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleStringChange}
           />
         </Col>
         <Col lg="4">
@@ -124,13 +133,16 @@ const Assignment = ({ atId, aIdx }) => {
           </Row>
         </Col>
         <Col lg="2">
-          <AssignmentInput
-            assignmentId={id}
-            inputType={'num'}
-            name={'weight'}
-            value={weight || 0.0}
-            onChange={handleFloatChange}
-          />
+          {weightLocked && <DynamicValue>{formatFloat(weight, 4)}</DynamicValue>}
+          {!weightLocked && (
+            <AssignmentInput
+              assignmentId={id}
+              inputType={'num'}
+              name={'weight'}
+              value={weight || 0.0}
+              onChange={handleFloatChange}
+            />
+          )}
         </Col>
         <Col lg="2">
           <DynamicValue>{formatFloat(weightedScore, 4)}</DynamicValue>

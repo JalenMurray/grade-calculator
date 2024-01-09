@@ -29,8 +29,6 @@ html, body {
 const AppContainer = styled.div`
   background-color: #212738;
   color: #faf3dd;
-  height: 100%;
-  overflow: hidden;
 `;
 
 const App = () => {
@@ -42,7 +40,7 @@ const App = () => {
           <Route path="/" element={<Navigation />}>
             <Route index element={<Home />} />
             <Route path="auth" element={<SignIn />} />
-            <Route path="/test_class" element={<ClassPage classId={1} />} />
+            <Route path="/class/:id" element={<ClassPage />} />
             <Route path="/not_found" element={<NotFound />} />
           </Route>
         </Routes>

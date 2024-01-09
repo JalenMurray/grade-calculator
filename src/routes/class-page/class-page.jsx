@@ -1,22 +1,23 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getClass } from '../../utils/api';
 
 // Components
 import { ClassPageContainer, AssignmentsContainer, ClassHeader } from './class-page.styles';
-import AssignmentSection from '../../components/class-components/assignment-section/assignment-section';
+import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
 import ProgressBar from '../../components/progress-bar/progress-bar';
 import { Col, Row } from 'react-bootstrap';
 import { ClassContext } from '../../contexts/class';
 
-const ClassPage = ({ classId }) => {
+const ClassPage = () => {
+  const { id } = useParams();
   const { name, setName, semester, setSemester, score, setScore, assignmentTypes, setAssignmentTypes } =
     useContext(ClassContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchClass = async () => {
-      const foundClass = await getClass(1);
+      const foundClass = await getClass(id);
       if (!foundClass) {
         navigate('/not_found');
         return;
@@ -51,7 +52,7 @@ const ClassPage = ({ classId }) => {
         </Row>
         {assignmentTypes &&
           Object.values(assignmentTypes).map((aType) => (
-            <AssignmentSection key={aType.id} atId={aType.id} className="mb-4"></AssignmentSection>
+            <AssignmentType key={aType.id} atId={aType.id} className="mb-4"></AssignmentType>
           ))}
       </AssignmentsContainer>
     </ClassPageContainer>

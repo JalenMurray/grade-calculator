@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const NotFoundContainer = styled.div`
-  height: 100%;
+  height: 2560px;
   text-align: center;
 `;
 

@@ -22,6 +22,7 @@ export const ClassProvider = ({ children }) => {
   useEffect(() => {
     const newScore = Object.values(assignmentTypes).reduce((acc, at) => acc + at.total_score, 0);
     setScore(newScore);
+    console.log('UPDATED SCORE');
   }, [assignmentTypes]);
 
   const getAtScores = (updatedAssignments) => {
@@ -41,10 +42,11 @@ export const ClassProvider = ({ children }) => {
   const getBalancedWeights = (atId, updatedAssignments) => {
     const assignmentType = assignmentTypes[atId];
     if (assignmentType.lock_weights) {
-      const currAssignments = assignmentTypes[atId].assignments;
+      const currAssignments = updatedAssignments;
       const numAssignments = currAssignments.length;
       const newWeight = assignmentType.weight / numAssignments;
-      return currAssignments.map((a) => ({ ...a, weight: newWeight }));
+      const weightedAssignments = currAssignments.map((a) => ({ ...a, weight: newWeight }));
+      return weightedAssignments;
     }
     return updatedAssignments;
   };
@@ -52,6 +54,7 @@ export const ClassProvider = ({ children }) => {
   const updateAssignments = (atId, updatedAssignments) => {
     const assignmentType = assignmentTypes[atId];
     const weightedAssignments = getBalancedWeights(atId, updatedAssignments);
+    console.log(weightedAssignments);
     const atWeight = getAtWeight(atId);
     const { total, maxTotal } = getAtScores(weightedAssignments);
     const updatedAssignmentType = {
@@ -66,6 +69,7 @@ export const ClassProvider = ({ children }) => {
 
   const addAssignment = (atId, assignment) => {
     const updatedAssignments = [...assignmentTypes[atId].assignments, assignment];
+    console.log('ADDED ASSIGNMENT', updatedAssignments);
     updateAssignments(atId, updatedAssignments);
   };
 

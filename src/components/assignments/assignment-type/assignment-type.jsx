@@ -25,6 +25,7 @@ const AssignmentType = ({ atId }) => {
 
   useEffect(() => {
     setAssignmentType(assignmentTypes[atId]);
+    console.log('RERENDERING');
   }, [assignmentTypes]);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ const AssignmentType = ({ atId }) => {
     setMaxTotalScore(assignmentType.max_total_score);
     setAssignments(assignmentType.assignments);
     setLockWeights(assignmentType.lock_weights);
+    console.log('UPDATED ASSIGNMENT TYPE', assignmentType.name);
   }, [assignmentType]);
 
   useEffect(() => {
@@ -56,7 +58,6 @@ const AssignmentType = ({ atId }) => {
     try {
       const response = await axios.post(url, newAssignment);
       const data = response.data;
-      console.log(data);
       addAssignment(id, data);
     } catch (error) {
       console.error('Error creating assignment:', error);
