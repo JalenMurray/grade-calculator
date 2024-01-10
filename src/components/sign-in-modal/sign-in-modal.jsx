@@ -1,5 +1,6 @@
 import { Modal, Row, Col } from 'react-bootstrap';
-import { ButtonContainer, Form, Input, Label, SubmitButton } from './sign-in-modal.styles';
+import { ButtonContainer, SubmitButton } from './sign-in-modal.styles';
+import { Form, Label, Input } from '../basic-component.styles';
 import Button from '../button/button';
 import { useState } from 'react';
 
@@ -14,7 +15,6 @@ const SignInModal = (props) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, 'CHANGED', value);
     setFormData({ ...formData, [name]: value });
   };
 

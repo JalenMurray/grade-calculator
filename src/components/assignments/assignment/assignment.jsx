@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, Fragment } from 'react';
-import { deleteAssignment } from '../../../utils/api';
+import { destroyAssignment } from '../../../utils/api';
 
 // Contexts
 import { ClassContext } from '../../../contexts/class';
@@ -42,17 +42,13 @@ const Assignment = ({ atId, aIdx }) => {
   }, [assignment]);
 
   useEffect(() => {
-    if (score && maxScore && weight) {
-      const scorePercent = score / maxScore;
-      setWeightedScore(scorePercent * weight);
-    }
+    const scorePercent = score / maxScore;
+    setWeightedScore(scorePercent * weight);
   }, [score, maxScore, weight]);
 
   useEffect(() => {
-    if (weightedScore) {
-      setLostPoints(weight - weightedScore);
-    }
-  }, [weightedScore]);
+    setLostPoints(weight - weightedScore);
+  }, [weightedScore, weight]);
 
   const INPUT_SETTERS = {
     score: setScore,
@@ -93,7 +89,7 @@ const Assignment = ({ atId, aIdx }) => {
   };
 
   const handleDelete = async () => {
-    await deleteAssignment(id);
+    await destroyAssignment(id);
     removeAssignment(atId, aIdx);
   };
 

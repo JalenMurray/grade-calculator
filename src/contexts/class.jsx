@@ -22,12 +22,12 @@ export const ClassProvider = ({ children }) => {
   useEffect(() => {
     const newScore = Object.values(assignmentTypes).reduce((acc, at) => acc + at.total_score, 0);
     setScore(newScore);
-    console.log('UPDATED SCORE');
   }, [assignmentTypes]);
 
   const getAtScores = (updatedAssignments) => {
     const newTotal = updatedAssignments.reduce((acc, a) => acc + (a.score / a.max_score) * a.weight, 0);
     const newMax = updatedAssignments.reduce((acc, a) => acc + a.weight, 0);
+    console.log(newTotal, newMax);
     return { total: newTotal, maxTotal: newMax };
   };
 
@@ -39,13 +39,18 @@ export const ClassProvider = ({ children }) => {
     return assignmentType.assignments.reduce((acc, a) => acc + a.weight, 0);
   };
 
-  const getBalancedWeights = (atId, updatedAssignments) => {
+  const getBalancedWeights = (atId, updatedAssignments, newWeight) => {
     const assignmentType = assignmentTypes[atId];
     if (assignmentType.lock_weights) {
       const currAssignments = updatedAssignments;
       const numAssignments = currAssignments.length;
-      const newWeight = assignmentType.weight / numAssignments;
-      const weightedAssignments = currAssignments.map((a) => ({ ...a, weight: newWeight }));
+      let updatedWeight;
+      if (newWeight) {
+        updatedWeight = newWeight / numAssignments;
+      } else {
+        updatedWeight = assignmentType.weight / numAssignments;
+      }
+      const weightedAssignments = currAssignments.map((a) => ({ ...a, weight: updatedWeight }));
       return weightedAssignments;
     }
     return updatedAssignments;
@@ -54,7 +59,6 @@ export const ClassProvider = ({ children }) => {
   const updateAssignments = (atId, updatedAssignments) => {
     const assignmentType = assignmentTypes[atId];
     const weightedAssignments = getBalancedWeights(atId, updatedAssignments);
-    console.log(weightedAssignments);
     const atWeight = getAtWeight(atId);
     const { total, maxTotal } = getAtScores(weightedAssignments);
     const updatedAssignmentType = {
@@ -69,13 +73,12 @@ export const ClassProvider = ({ children }) => {
 
   const addAssignment = (atId, assignment) => {
     const updatedAssignments = [...assignmentTypes[atId].assignments, assignment];
-    console.log('ADDED ASSIGNMENT', updatedAssignments);
     updateAssignments(atId, updatedAssignments);
   };
 
   const removeAssignment = (atId, aIdx) => {
     const currAssignments = assignmentTypes[atId].assignments;
-    const updatedAssignments = currAssignments.filter((_, i) => i != aIdx);
+    const updatedAssignments = currAssignments.filter((_, i) => i !== aIdx);
     updateAssignments(atId, updatedAssignments);
   };
 
@@ -84,12 +87,38 @@ export const ClassProvider = ({ children }) => {
     const currAssignment = currAssignments[aIdx];
     const newAssignment = { ...currAssignment, [name]: value };
     const updatedAssignments = currAssignments.map((a, i) => {
-      if (i == aIdx) {
+      if (i === aIdx) {
         return newAssignment;
       }
       return a;
     });
     updateAssignments(atId, updatedAssignments);
+  };
+
+  const addAssignmentType = (newAssignmentType) => {
+    const id = newAssignmentType.id;
+    setAssignmentTypes({ ...assignmentTypes, [id]: newAssignmentType });
+  };
+
+  const deleteAssignmentType = (id) => {
+    const { [id]: deleted, ...updatedAssignmentTypes } = assignmentTypes;
+    setAssignmentTypes(updatedAssignmentTypes);
+  };
+
+  const updateAssignmentType = (id, name, value) => {
+    const currAssignmentType = assignmentTypes[id];
+    let updatedAssignmentType;
+    if (name === 'weight') {
+      const updatedAssignments = getBalancedWeights(id, currAssignmentType.assignments, value);
+      updatedAssignmentType = { ...currAssignmentType, assignments: updatedAssignments, [name]: value };
+    } else if (name === 'lock_weights') {
+      const updatedAssignments = getBalancedWeights(id, currAssignmentType.assignments);
+      console.log('UPDATED_ASSIGNMENTS', updatedAssignments);
+      updatedAssignmentType = { ...currAssignmentType, assignments: updatedAssignments, [name]: value };
+    } else {
+      updatedAssignmentType = { ...currAssignmentType, [name]: value };
+    }
+    setAssignmentTypes({ ...assignmentTypes, [id]: updatedAssignmentType });
   };
 
   const value = {
@@ -102,6 +131,9 @@ export const ClassProvider = ({ children }) => {
     addAssignment,
     removeAssignment,
     updateAssignment,
+    addAssignmentType,
+    deleteAssignmentType,
+    updateAssignmentType,
     score,
     setScore,
   };

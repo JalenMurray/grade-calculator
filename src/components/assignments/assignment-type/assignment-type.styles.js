@@ -13,3 +13,5 @@ export const AddButton = styled.span`
 export const LockIcon = styled.span`
   margin-left: 30px;
 `;
+
+export const DynamicValue = styled.h4``;

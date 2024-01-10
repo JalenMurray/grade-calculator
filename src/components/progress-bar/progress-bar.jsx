@@ -9,9 +9,7 @@ const ProgressBar = ({ percentage }) => {
   const [barColor, setBarColor] = useState('#63FF00');
 
   useEffect(() => {
-    if (percentage) {
-      setPercent(parseFloat(percentage.toFixed(2)));
-    }
+    setPercent(parseFloat(percentage.toFixed(2)));
   }, [percentage]);
 
   useEffect(() => {

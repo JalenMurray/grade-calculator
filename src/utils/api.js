@@ -26,7 +26,7 @@ const createData = async (url, data, errorMessage) => {
   }
 };
 
-const deleteData = async (url, errorMessage) => {
+const destroyData = async (url, errorMessage) => {
   try {
     await axios.delete(url);
     return true;
@@ -84,9 +84,9 @@ export const createClass = async (newClass) => {
   return data;
 };
 
-export const deleteClass = async (id) => {
+export const destroyClass = async (id) => {
   const url = `${BASE_URL}classes/${id}/`;
-  const deleted = await deleteData(url, `Error deleting class ${id}`);
+  const deleted = await destroyData(url, `Error deleting class ${id}`);
   return deleted;
 };
 
@@ -102,13 +102,14 @@ export const patchClass = async (id, toUpdate) => {
 
 export const createAssignmentType = async (assignmentType) => {
   const url = `${BASE_URL}assignment_types/`;
+  console.log('CREATING ASSIGNMENT API');
   const data = await createData(url, assignmentType, 'Error creating new assignment type');
   return data;
 };
 
-export const deleteAssignmentType = async (id) => {
+export const destroyAssignmentType = async (id) => {
   const url = `${BASE_URL}assignment_types/${id}/`;
-  const deleted = await deleteData(url, `Error deleting assignment type ${id}`);
+  const deleted = await destroyData(url, `Error deleting assignment type ${id}`);
   return deleted;
 };
 
@@ -128,9 +129,9 @@ export const createAssignment = async (assignment) => {
   return data;
 };
 
-export const deleteAssignment = async (id) => {
+export const destroyAssignment = async (id) => {
   const url = `${BASE_URL}assignments/${id}/`;
-  const deleted = await deleteData(url, `Error deleting assignment ${id}`);
+  const deleted = await destroyData(url, `Error deleting assignment ${id}`);
   return deleted;
 };
 

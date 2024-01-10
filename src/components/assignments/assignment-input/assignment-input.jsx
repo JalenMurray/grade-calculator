@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react';
 import { patchAssignment } from '../../../utils/api';
 
 // Components
-import { Input, Header } from './assignment-input.styles';
+import ClickableInput from '../../clickable-input/clickable-input';
 
 const INPUT_TYPE_PROPS = {
-  num: { type: 'text', inputMode: 'numeric', pattern: '[0-9]*[.,]?[0-9]+' },
+  num: { type: 'number' },
   text: { type: 'text' },
 };
 
 const AssignmentInput = ({ assignmentId, inputType, ...otherProps }) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [typeProps, setTypeProps] = useState({});
 
   useEffect(() => {
@@ -21,19 +20,9 @@ const AssignmentInput = ({ assignmentId, inputType, ...otherProps }) => {
   const handleBlur = async (e) => {
     const { name, value } = e.target;
     await patchAssignment(assignmentId, { [name]: value });
-    setIsEditing(false);
   };
 
-  const handleClick = () => {
-    setIsEditing(true);
-  };
-
-  return (
-    <div>
-      {isEditing && <Input autoFocus onBlur={handleBlur} {...typeProps} {...otherProps}></Input>}
-      {!isEditing && <Header onClick={handleClick}>{otherProps.value}</Header>}
-    </div>
-  );
+  return <ClickableInput input={'light'} header={'darkSpan'} blur={handleBlur} {...typeProps} {...otherProps} />;
 };
 
 export default AssignmentInput;
