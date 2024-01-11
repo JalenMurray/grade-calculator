@@ -26,7 +26,7 @@ export const FEATURES = [
   {
     label: 'Lock Weights',
     description:
-      'Ability to lock weights for an assignment type.  This will cause the weights for individual assignments to be automatically balanced based on the number of assignments. Ex. 27 / 4 = 6.75',
+      'Ability to lock weights for an assignment type. This feature can be toggled on and off in the assignment type options.  When the weight is locked the weights for individual assignments will be automatically balanced based on the number of assignments. Ex. 27 / 4 = 6.75',
     image: lockWeights,
   },
   {
