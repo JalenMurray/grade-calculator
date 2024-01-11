@@ -7,10 +7,11 @@ import { ClassContext } from '../../../contexts/class';
 
 // Components
 import { AddButton, AssignmentsContainer, LockIcon, DynamicValue } from './assignment-type.styles';
-import { Form, Input, Label } from '../../basic-component.styles';
+import Form from '../../form/form';
+import VModal from '../../v-modal/v-modal';
 import { Option } from '../assignment/assignment.styles';
 import { AddCircleOutline, LockOpenRounded, LockRounded } from '@mui/icons-material';
-import { Row, Col, Modal, Button } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import Assignment from '../assignment/assignment';
 import Dropdown from '../../dropdown/dropdown';
 import ClickableInput from '../../clickable-input/clickable-input';
@@ -29,6 +30,7 @@ const AssignmentType = ({ atId }) => {
   useEffect(() => {
     setLostPoints(assignmentType.max_total_score - assignmentType.total_score);
     setLockWeights(assignmentType.lock_weights);
+    console.log();
   }, [assignmentType]);
 
   const handleFloatChange = (e) => {
@@ -147,50 +149,30 @@ const AssignmentType = ({ atId }) => {
       <hr />
       {assignmentType.assignments &&
         assignmentType.assignments.map((assignment, i) => <Assignment key={i} atId={assignmentType.id} aIdx={i} />)}
-      <Modal
+      <VModal
         show={modalOpen}
         onHide={() => setModalOpen(false)}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Sign In</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmitDefaultName}>
-            <Row>
-              <Col lg="12">
-                <Label htmlFor="username">
-                  Default Name
-                  <Input
-                    type="text"
-                    name="default_name"
-                    value={assignmentType.default_name}
-                    onChange={handleChangeDefault}
-                  />
-                </Label>
-                <Label htmlFor="username">
-                  Default Max Score
-                  <Input
-                    type="text"
-                    inputMode={'numeric'}
-                    pattern={'[0-9]*[.,]?[0-9]+'}
-                    name="max_score"
-                    value={assignmentType.max_score}
-                    onChange={handleChangeDefault}
-                  />
-                </Label>
-              </Col>
-              <Row className="p-4">
-                <Button variant="primary" type="submit">
-                  Change Default Name
-                </Button>
-              </Row>
-            </Row>
-          </Form>
-        </Modal.Body>
-      </Modal>
+        header={'Modify Defaults'}
+        body={
+          <Form
+            onSubmit={handleSubmitDefaultName}
+            formData={[
+              {
+                label: 'Default Name',
+                name: 'default_name',
+                value: assignmentType.default_name,
+                onChange: handleChangeDefault,
+              },
+              {
+                label: 'Default Max Score',
+                name: 'max_score',
+                value: assignmentType.max_score,
+                onChange: handleChangeDefault,
+              },
+            ]}
+          />
+        }
+      />
     </AssignmentsContainer>
   );
 };

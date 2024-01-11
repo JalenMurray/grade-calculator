@@ -11,6 +11,8 @@ export const ClassContext = createContext({
   setAssignments: () => null,
   score: 0,
   setScore: () => null,
+  desiredScore: 0,
+  setDesiredScore: () => null,
 });
 
 export const ClassProvider = ({ children }) => {
@@ -18,6 +20,7 @@ export const ClassProvider = ({ children }) => {
   const [semester, setSemester] = useState('');
   const [assignmentTypes, setAssignmentTypes] = useState({});
   const [score, setScore] = useState(0);
+  const [desiredScore, setDesiredScore] = useState(0);
 
   useEffect(() => {
     const newScore = Object.values(assignmentTypes).reduce((acc, at) => acc + at.total_score, 0);
@@ -27,16 +30,15 @@ export const ClassProvider = ({ children }) => {
   const getAtScores = (updatedAssignments) => {
     const newTotal = updatedAssignments.reduce((acc, a) => acc + (a.score / a.max_score) * a.weight, 0);
     const newMax = updatedAssignments.reduce((acc, a) => acc + a.weight, 0);
-    console.log(newTotal, newMax);
     return { total: newTotal, maxTotal: newMax };
   };
 
-  const getAtWeight = (atId) => {
+  const getAtWeight = (atId, weightedAssignments) => {
     const assignmentType = assignmentTypes[atId];
     if (assignmentType.lock_weights) {
       return assignmentType.weight;
     }
-    return assignmentType.assignments.reduce((acc, a) => acc + a.weight, 0);
+    return weightedAssignments.reduce((acc, a) => acc + a.weight, 0);
   };
 
   const getBalancedWeights = (atId, updatedAssignments, newWeight) => {
@@ -59,7 +61,7 @@ export const ClassProvider = ({ children }) => {
   const updateAssignments = (atId, updatedAssignments) => {
     const assignmentType = assignmentTypes[atId];
     const weightedAssignments = getBalancedWeights(atId, updatedAssignments);
-    const atWeight = getAtWeight(atId);
+    const atWeight = getAtWeight(atId, weightedAssignments);
     const { total, maxTotal } = getAtScores(weightedAssignments);
     const updatedAssignmentType = {
       ...assignmentType,
@@ -136,6 +138,8 @@ export const ClassProvider = ({ children }) => {
     updateAssignmentType,
     score,
     setScore,
+    desiredScore,
+    setDesiredScore,
   };
   return <ClassContext.Provider value={value}>{children}</ClassContext.Provider>;
 };

@@ -8,3 +8,5 @@ export const formatFloat = (num, n) => {
   }
   return 0.0;
 };
+
+export const COLOR_ZONES = ['#FF0000', '#FFC100', '#FFFF00', '#D6FF00', '#63FF00'];
