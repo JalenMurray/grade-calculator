@@ -12,11 +12,18 @@ const Navigation = () => {
     <Fragment>
       <Navbar data-bs-theme="light" style={{ background: '#829191' }}>
         <Navbar.Brand href="/">
-          <img src={Logo} width="50" height="50" className="d-inline-block align-top" alt="Logo" />
+          <img
+            src={Logo}
+            width="50"
+            height="50"
+            className="d-inline-block align-top"
+            alt="Logo"
+            style={{ borderRadius: '15px', marginLeft: '15px' }}
+          />
         </Navbar.Brand>
         <Nav className="me-auto text-lg">
-          <Nav.Link href="/test_class">
-            <NavLinkText>TEST CLASS</NavLinkText>
+          <Nav.Link href="/class/1">
+            <NavLinkText>Classes</NavLinkText>
           </Nav.Link>
         </Nav>
         <Nav className="">
