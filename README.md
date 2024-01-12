@@ -14,6 +14,9 @@ Still WIP
 - [ ] Allow Creating new classes
 - [ ] Allow Possibly Guest Classes
 - [ ] Desired Grade
+- [ ] Semester Dashboard
+- [ ] Current Semester tracker
+- [ ] Semester and Total GPA
 
 ## Extra
 
@@ -21,3 +24,5 @@ Still WIP
 - [ ] Quick Import / Export Classes
 - [ ] Customization options
 - [ ] Customizable Benchmarks for bar colors.
+- [ ] Class sharing.  (Persistent Access, possibly cookies)
+- [ ] Schedule Page (Different Views, sync with grade calculator)
