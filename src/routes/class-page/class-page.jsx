@@ -14,6 +14,7 @@ import {
   DesiredScore,
   SuccessMsg,
 } from './class-page.styles';
+import { ContentContainer } from '../../components/basic-component.styles';
 import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
 import ProgressBar from '../../components/progress-bar/progress-bar';
 import Button from '../../components/button/button';
@@ -41,19 +42,8 @@ const getDesiredScoreColor = (distance) => {
 
 const ClassPage = () => {
   const { id } = useParams();
-  const {
-    name,
-    setName,
-    semester,
-    setSemester,
-    score,
-    setScore,
-    desiredScore,
-    setDesiredScore,
-    assignmentTypes,
-    setAssignmentTypes,
-    addAssignmentType,
-  } = useContext(ClassContext);
+  const { currentClass, setCurrentClass, updateClass, assignmentTypes, setAssignmentTypes, addAssignmentType } =
+    useContext(ClassContext);
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [desiredScoreDistance, setDesiredScoreDistance] = useState(0);
@@ -72,10 +62,7 @@ const ClassPage = () => {
         acc[obj.id] = { ...obj };
         return acc;
       }, {});
-      setName(foundClass.name);
-      setSemester(foundClass.semester);
-      setScore(foundClass.score);
-      setDesiredScore(foundClass.desired_score);
+      setCurrentClass(foundClass);
       setAssignmentTypes(assignmentTypes);
     };
     fetchClass();
@@ -83,18 +70,18 @@ const ClassPage = () => {
   }, []);
 
   useEffect(() => {
-    document.title = `${name} -- ${semester}`;
+    document.title = `${currentClass.code} -- ${currentClass.semester}`;
 
     return () => {
       document.title = 'Grade Calculator';
     };
-  }, [name, semester]);
+  }, [currentClass]);
 
   useEffect(() => {
-    const newDistance = formatFloat(desiredScore - score, 2);
+    const newDistance = formatFloat(currentClass.desired_score - currentClass.score, 2);
     setDesiredScoreDistance(newDistance);
     setDesiredScoreColor(getDesiredScoreColor(newDistance));
-  }, [desiredScore, score]);
+  }, [currentClass]);
 
   useEffect(() => {
     setDesiredScoreMet(desiredScoreDistance <= 0);
@@ -115,16 +102,24 @@ const ClassPage = () => {
 
   const handleEditClass = async (e) => {
     e.preventDefault();
-    const patch = { name: name, semester: semester, desired_score: desiredScore };
+    const patch = { name: currentClass.code, desired_score: currentClass.desired_score };
     await patchClass(id, patch);
     setModalOpen(false);
+  };
+
+  const handleChangeClass = async (e) => {
+    const { name, value } = e.target;
+    const toUpdate = { [name]: value };
+    updateClass(toUpdate);
   };
 
   return (
     <ClassPageContainer className="text-dark m-4">
       <ClassHeader className="text-light">
-        <h1>{name}</h1>
-        <span className="text-secondary">{semester}</span>
+        <h1>
+          {currentClass.code} {currentClass.title}
+        </h1>
+        <span className="text-secondary">{currentClass.semester}</span>
       </ClassHeader>
       <Container fluid>
         <Row>
@@ -172,8 +167,8 @@ const ClassPage = () => {
             </ButtonContainer>
           </Col>
           <Col lg="10">
-            <ProgressBar percentage={score} />
-            <AssignmentsContainer className="bg-secondary">
+            <ProgressBar percentage={currentClass.score} />
+            <ContentContainer>
               <Row className="pb-4">
                 <Col lg="2">Name</Col>
                 <Col lg="4">Scores</Col>
@@ -185,7 +180,7 @@ const ClassPage = () => {
                 Object.values(assignmentTypes).map((aType, i) => (
                   <AssignmentType key={i} atId={aType.id} className="mb-4"></AssignmentType>
                 ))}
-            </AssignmentsContainer>
+            </ContentContainer>
           </Col>
           <Col lg="1">Something Else</Col>
         </Row>
@@ -199,22 +194,22 @@ const ClassPage = () => {
             onSubmit={handleEditClass}
             formData={[
               {
-                label: 'Name',
-                name: 'name',
-                value: name,
-                onChange: (e) => setName(e.target.value),
+                label: 'Code',
+                name: 'code',
+                value: currentClass.code,
+                onChange: handleChangeClass,
               },
               {
-                label: 'Semester',
-                name: 'semester',
-                value: semester,
-                onChange: (e) => setSemester(e.target.value),
+                label: 'Title',
+                name: 'title',
+                value: currentClass.title,
+                onChange: handleChangeClass,
               },
               {
                 label: 'Desired Score',
                 name: 'desired_score',
-                value: desiredScore,
-                onChange: (e) => setDesiredScore(e.target.value),
+                value: currentClass.desired_score,
+                onChange: handleChangeClass,
               },
             ]}
           />

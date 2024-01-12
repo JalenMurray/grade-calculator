@@ -8,8 +8,9 @@ from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateMo
 from rest_framework.generics import  GenericAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework import status
 
-from .models import User, Class, AssignmentType, Assignment
-from .serializers import UserSerializer, ClassSerializer, AssignmentTypeSerializer, AssignmentSerializer
+from .models import User, Class, AssignmentType, Assignment, Semester
+from .serializers import UserSerializer, ClassSerializer, AssignmentTypeSerializer, AssignmentSerializer,\
+    SemesterSerializer
 
 
 class ClassView(View):
@@ -63,7 +64,6 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def new(self, request):
-        print("IN NEW")
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -88,7 +88,6 @@ class AssignmentViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def new(self, request):
-        print("IN NEW")
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -133,3 +132,13 @@ class AssignmentList(ListCreateAPIView):
 class AssignmentDetail(RetrieveUpdateDestroyAPIView):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
+
+
+class SemesterList(ListCreateAPIView):
+    queryset = Semester.objects.all()
+    serializer_class = SemesterSerializer
+
+
+class SemesterDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Semester.objects.all()
+    serializer_class = SemesterSerializer

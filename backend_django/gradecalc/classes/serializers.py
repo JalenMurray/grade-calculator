@@ -1,5 +1,43 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField, FloatField
-from .models import User, Class, AssignmentType, Assignment
+from .models import User, Class, AssignmentType, Assignment, Semester
+
+DEFAULT_GRADE_SCALE = [(97, 'A+'), (93, 'A'), (90, 'A-'), (87, 'B+'), (83, 'B'), (80, 'B-'), (77, 'C+'), (73, 'C'),
+                       (70, 'C-'), (67, 'D+'), (63, 'D'), (60, 'D-')]
+
+
+def get_letter_grade(score, scale=DEFAULT_GRADE_SCALE):
+    for (min_score, letter) in scale:
+        if score >= min_score:
+            return letter
+    return 'F'
+
+
+GPA_VALUES = {
+    'A+': 4,
+    'A': 4,
+    'A-': 3.7,
+    'B+': 3.3,
+    'B': 3,
+    'B-': 2.7,
+    'C+': 2.3,
+    'C': 2,
+    'C-': 1.7,
+    'D+': 1.3,
+    'D': 1,
+    'D-': .7,
+    'F': 0
+}
+
+
+def get_grade_points(units, score, scale=GPA_VALUES):
+    letter_grade = get_letter_grade(score)
+    points = GPA_VALUES[letter_grade]
+    return points * units
+
+def get_gpa(classes):
+    gp = [get_grade_points(cls.units, cls.score) for cls in classes]
+    units = sum([cls.units for cls in classes])
+    return sum(gp) / units
 
 
 class UserSerializer(ModelSerializer):
@@ -34,19 +72,28 @@ class AssignmentTypeSerializer(ModelSerializer):
 class ClassSerializer(ModelSerializer):
     assignment_types = AssignmentTypeSerializer(many=True, read_only=True)
     score = SerializerMethodField()
+    semester = SerializerMethodField()
 
     class Meta:
         model = Class
         fields = '__all__'
 
     def get_score(self, obj):
-        a_types = AssignmentType.objects.filter(class_associated=obj)
-        score = 0.0
+        return obj.score
 
-        for at in a_types:
-            assignments = Assignment.objects.filter(assignment_type=at)
-            for a in assignments:
-                if at.max_score > 0:
-                    weighted_score = (a.score / at.max_score) * a.weight
-                    score += weighted_score
-        return score
+    def get_semester(self, obj):
+        return str(obj.semester)
+
+
+class SemesterSerializer(ModelSerializer):
+    classes = ClassSerializer(many=True, read_only=True)
+    gpa = SerializerMethodField()
+
+    class Meta:
+        model = Semester
+        fields = '__all__'
+
+    def get_gpa(self, obj):
+        classes = obj.classes.all()
+        gpa = get_gpa(classes)
+        return gpa

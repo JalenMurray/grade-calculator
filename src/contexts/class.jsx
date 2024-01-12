@@ -1,14 +1,8 @@
 import { createContext, useEffect, useState } from 'react';
 
 export const ClassContext = createContext({
-  name: '',
-  setName: () => null,
-  semester: '',
-  setSemester: () => null,
   assignmentTypes: {},
   setAssignmentTypes: () => null,
-  assignments: {},
-  setAssignments: () => null,
   score: 0,
   setScore: () => null,
   desiredScore: 0,
@@ -16,16 +10,21 @@ export const ClassContext = createContext({
 });
 
 export const ClassProvider = ({ children }) => {
-  const [name, setName] = useState('');
-  const [semester, setSemester] = useState('');
+  const [currentClass, setCurrentClass] = useState({});
   const [assignmentTypes, setAssignmentTypes] = useState({});
-  const [score, setScore] = useState(0);
-  const [desiredScore, setDesiredScore] = useState(0);
 
   useEffect(() => {
     const newScore = Object.values(assignmentTypes).reduce((acc, at) => acc + at.total_score, 0);
-    setScore(newScore);
+    const toUpdate = { score: newScore };
+    updateClass(toUpdate);
   }, [assignmentTypes]);
+
+  // Class Updates
+
+  const updateClass = (toUpdate) => {
+    const updatedClass = { ...currentClass, ...toUpdate };
+    setCurrentClass(updatedClass);
+  };
 
   const getAtScores = (updatedAssignments) => {
     const newTotal = updatedAssignments.reduce((acc, a) => acc + (a.score / a.max_score) * a.weight, 0);
@@ -124,10 +123,9 @@ export const ClassProvider = ({ children }) => {
   };
 
   const value = {
-    name,
-    setName,
-    semester,
-    setSemester,
+    currentClass,
+    setCurrentClass,
+    updateClass,
     assignmentTypes,
     setAssignmentTypes,
     addAssignment,
@@ -136,10 +134,6 @@ export const ClassProvider = ({ children }) => {
     addAssignmentType,
     deleteAssignmentType,
     updateAssignmentType,
-    score,
-    setScore,
-    desiredScore,
-    setDesiredScore,
   };
   return <ClassContext.Provider value={value}>{children}</ClassContext.Provider>;
 };

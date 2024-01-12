@@ -40,9 +40,11 @@ const Home = () => {
           <HeaderButton variant="secondary" size="lg">
             Use as a Guest
           </HeaderButton>
-          <HeaderButton variant="primary" size="lg">
-            Login
-          </HeaderButton>
+          <a href="/class/1">
+            <HeaderButton variant="primary" size="lg">
+              Login
+            </HeaderButton>
+          </a>
         </HeaderButtonContainer>
       </SiteNameContainer>
       <FeaturesContainer>

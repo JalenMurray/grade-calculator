@@ -102,7 +102,6 @@ export const patchClass = async (id, toUpdate) => {
 
 export const createAssignmentType = async (assignmentType) => {
   const url = `${BASE_URL}assignment_types/`;
-  console.log('CREATING ASSIGNMENT API');
   const data = await createData(url, assignmentType, 'Error creating new assignment type');
   return data;
 };
@@ -138,5 +137,33 @@ export const destroyAssignment = async (id) => {
 export const patchAssignment = async (id, toUpdate) => {
   const url = `${BASE_URL}assignments/${id}/`;
   const patched = await patchData(url, toUpdate, `Error updating assignment ${id}`);
+  return patched;
+};
+
+///////////////////////////////////////
+////////////// Semester //////////////
+/////////////////////////////////////
+
+export const getSemester = async (id) => {
+  const url = `${BASE_URL}semesters/${id}`;
+  const data = await getData(url, `Error fetching assignment ${id}`);
+  return data;
+};
+
+export const createSemester = async (id, newSemester) => {
+  const url = `${BASE_URL}semesters/`;
+  const data = await createData(url, newSemester, `Error creating semester`);
+  return data;
+};
+
+export const destroySemester = async (id) => {
+  const url = `${BASE_URL}semesters/${id}`;
+  const deleted = await destroyData(url, `Error deleting semester ${id}`);
+  return deleted;
+};
+
+export const patchSemester = async (id, toUpdate) => {
+  const url = `${BASE_URL}semesters/${id}`;
+  const patched = await patchData(url, toUpdate, `Error updating semester ${id}`);
   return patched;
 };

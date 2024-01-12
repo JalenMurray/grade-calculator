@@ -13,19 +13,43 @@ class User(Model):
         return self.username
 
 
-class Class(Model):
-    name = CharField(max_length=8)
-    semester = CharField(max_length=11)
-    users = ManyToManyField(User, related_name='classes', blank=True)
-    desired_score = FloatField(default=100.0)
+class Semester(Model):
+    season = CharField(max_length=7, choices=[('Spring', 'Spring'), ('Summer', 'Summer'), ('Fall', 'Fall'),
+                                              ('Winter', 'Winter')])
+    year = IntegerField()
+    user = ForeignKey(User, on_delete=models.CASCADE, related_name='user')
 
     def __str__(self):
-        return f'{self.name}-{self.semester}'
+        return f'{self.season} {self.year}'
+
+
+class Class(Model):
+    code = CharField(max_length=20)
+    title = CharField(max_length=255)
+    semester = ForeignKey(Semester, on_delete=models.CASCADE, related_name='classes')
+    desired_score = FloatField(default=100.0)
+    units = IntegerField(verbose_name="Units/Credits")
+
+    def __str__(self):
+        return f'{self.code}-{self.semester}'
+
+    @property
+    def score(self):
+        a_types = AssignmentType.objects.filter(class_associated=self)
+        score = 0.0
+
+        for at in a_types:
+            assignments = Assignment.objects.filter(assignment_type=at)
+            for a in assignments:
+                if at.max_score > 0:
+                    weighted_score = (a.score / a.max_score) * a.weight
+                    score += weighted_score
+        return score
 
 
 class AssignmentType(Model):
     name = CharField(max_length=100)
-    max_score = IntegerField(blank=True, null=True, default=100)
+    max_score = FloatField(blank=True, null=True, default=100.0)
     weight = FloatField(blank=True, null=True)
     class_associated = ForeignKey(Class, on_delete=models.CASCADE, related_name='assignment_types')
     default_name = CharField(max_length=100)
@@ -48,15 +72,12 @@ class AssignmentType(Model):
         return max_total_score
 
     def balance_weight(self):
-        print("in Balance weights")
         if self.lock_weights:
             assignments = Assignment.objects.filter(assignment_type=self)
             num_assignments = assignments.count()
             new_weight = self.weight / num_assignments
             assignments.update(weight=new_weight)
         else:
-            print("LOCK WEIGHTS: OFF")
-            print(sum([a.weight for a in Assignment.objects.filter(assignment_type=self)]))
             self.weight = sum([a.weight for a in Assignment.objects.filter(assignment_type=self)])
             self.save()
 
