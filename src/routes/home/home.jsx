@@ -40,7 +40,7 @@ const Home = () => {
           <HeaderButton variant="secondary" size="lg">
             Use as a Guest
           </HeaderButton>
-          <a href="/class/1">
+          <a href="/semester/2">
             <HeaderButton variant="primary" size="lg">
               Login
             </HeaderButton>

@@ -72,7 +72,7 @@ class AssignmentTypeSerializer(ModelSerializer):
 class ClassSerializer(ModelSerializer):
     assignment_types = AssignmentTypeSerializer(many=True, read_only=True)
     score = SerializerMethodField()
-    semester = SerializerMethodField()
+    semester_str = SerializerMethodField()
 
     class Meta:
         model = Class
@@ -81,7 +81,7 @@ class ClassSerializer(ModelSerializer):
     def get_score(self, obj):
         return obj.score
 
-    def get_semester(self, obj):
+    def get_semester_str(self, obj):
         return str(obj.semester)
 
 

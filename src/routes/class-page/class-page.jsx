@@ -22,6 +22,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import VModal from '../../components/v-modal/v-modal';
 import Form from '../../components/form/form';
 import { Share, ImportExport, AddCircleOutline, Edit, ColorLens } from '@mui/icons-material';
+import BackButton from '../../components/back-button/back-button';
 
 // Context
 import { ClassContext } from '../../contexts/class';
@@ -64,13 +65,14 @@ const ClassPage = () => {
       }, {});
       setCurrentClass(foundClass);
       setAssignmentTypes(assignmentTypes);
+      console.log(foundClass);
     };
     fetchClass();
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    document.title = `${currentClass.code} -- ${currentClass.semester}`;
+    document.title = `${currentClass.code} -- ${currentClass.semester_str}`;
 
     return () => {
       document.title = 'Grade Calculator';
@@ -115,11 +117,12 @@ const ClassPage = () => {
 
   return (
     <ClassPageContainer className="text-dark m-4">
+      <BackButton text={currentClass.semester_str} url={`/semester/${currentClass.semester}`} />
       <ClassHeader className="text-light">
         <h1>
           {currentClass.code} {currentClass.title}
         </h1>
-        <span className="text-secondary">{currentClass.semester}</span>
+        <span className="text-secondary">{currentClass.semester_str}</span>
       </ClassHeader>
       <Container fluid>
         <Row>

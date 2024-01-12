@@ -29,6 +29,7 @@ class Class(Model):
     semester = ForeignKey(Semester, on_delete=models.CASCADE, related_name='classes')
     desired_score = FloatField(default=100.0)
     units = IntegerField(verbose_name="Units/Credits")
+    display_color = CharField(max_length=10, default='#23447d')
 
     def __str__(self):
         return f'{self.code}-{self.semester}'

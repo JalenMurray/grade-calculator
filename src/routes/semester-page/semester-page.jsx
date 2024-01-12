@@ -3,18 +3,11 @@ import { useEffect, useState } from 'react';
 import { formatFloat } from '../../utils/utils';
 
 // Components
-import {
-  SemesterHeaderContainer,
-  SemesterPageContainer,
-  GPA,
-  ClassCard,
-  ClassCode,
-  ClassTitle,
-  ClassScore,
-} from './semester-page.styles';
+import { SemesterHeaderContainer, SemesterPageContainer, GPA } from './semester-page.styles';
 import { PageContainer, ContentContainer } from '../../components/basic-component.styles';
 import { Row, Col, Container } from 'react-bootstrap';
 import { getSemester } from '../../utils/api';
+import ClassCard from '../../components/semesters/class-card/class-card';
 
 const SemesterPage = () => {
   const { id } = useParams();
@@ -25,7 +18,6 @@ const SemesterPage = () => {
   useEffect(() => {
     const fetch = async () => {
       const data = await getSemester(id);
-      console.log(data);
       setSemester(data);
     };
     fetch();
@@ -70,14 +62,8 @@ const SemesterPage = () => {
                       <Row key={i} style={{ marginTop: '20px' }}>
                         {row.map((cls, j) => {
                           return (
-                            <Col lg={12 / colsPerRow}>
-                              <Link to={`/class/${cls.id}`}>
-                                <ClassCard key={j}>
-                                  <ClassCode>{cls.code}</ClassCode>
-                                  <ClassTitle>{cls.title}</ClassTitle>
-                                  <ClassScore>{formatFloat(cls.score, 2)} %</ClassScore>
-                                </ClassCard>
-                              </Link>
+                            <Col lg={12 / colsPerRow} key={j}>
+                              <ClassCard cls={cls} />
                             </Col>
                           );
                         })}

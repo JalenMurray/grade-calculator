@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ContentContainer = styled.div`
-  min-height: 70vh;
+  min-height: 60vh;
   height: fit-content;
   background-color: ${(props) => props.theme.secondary};
   width: 100%;
@@ -10,6 +10,7 @@ export const ContentContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 30px;
+  margin-bottom: 100px;
 `;
 
 export const PageContainer = styled.div`
