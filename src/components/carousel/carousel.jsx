@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 
 import { CarouselRow, ArrowContainer, CarouselImageContainer, CarouselDescriptionContainer } from './carousel.styles';
-import { Row, Col } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-
-import exImage from '../../assets/feature-images/example-feature.png';
 
 const Carousel = ({ slides }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,10 +10,10 @@ const Carousel = ({ slides }) => {
 
   useEffect(() => {
     setSlide(slides[currentIndex]);
-  }, [currentIndex]);
+  }, [currentIndex, slides]);
 
   const handleLeftClick = () => {
-    if (currentIndex == 0) {
+    if (currentIndex === 0) {
       setCurrentIndex(slides.length - 1);
     } else {
       setCurrentIndex(currentIndex - 1);
@@ -23,7 +21,7 @@ const Carousel = ({ slides }) => {
   };
 
   const handleRightClick = () => {
-    if (currentIndex == slides.length - 1) {
+    if (currentIndex === slides.length - 1) {
       setCurrentIndex(0);
     } else {
       setCurrentIndex(currentIndex + 1);

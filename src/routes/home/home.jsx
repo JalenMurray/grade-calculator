@@ -1,8 +1,7 @@
-import { useState, useEffect, Fragment } from 'react';
+import { Fragment } from 'react';
 import { FEATURES } from '../../utils/utils';
 
 // Components
-import SignUp from '../../components/sign-up/sign-up';
 import {
   SiteNameContainer,
   SiteName,
@@ -17,20 +16,6 @@ import { Row, Col } from 'react-bootstrap';
 import Carousel from '../../components/carousel/carousel';
 
 const Home = () => {
-  const [data, setData] = useState([]);
-  const [user, setUser] = useState({ username: 'default' });
-
-  useEffect(() => {
-    fetch('http://localhost:8000/classes/users/')
-      .then((response) => response.json())
-      .then((data) => setData(data[0]))
-      .catch((error) => console.error('Error:', error));
-  }, []);
-
-  useEffect(() => {
-    setUser(data);
-  }, [data]);
-
   return (
     <Fragment>
       <SiteNameContainer>

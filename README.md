@@ -17,6 +17,7 @@ Still WIP
 - [ ] Semester Dashboard
 - [ ] Current Semester tracker
 - [ ] Semester and Total GPA
+- [ ] Ability to use points instead of weights.
 
 ## Extra
 
@@ -24,5 +25,11 @@ Still WIP
 - [ ] Quick Import / Export Classes
 - [ ] Customization options
 - [ ] Customizable Benchmarks for bar colors.
-- [ ] Class sharing.  (Persistent Access, possibly cookies)
+- [ ] Class sharing. (Persistent Access, possibly cookies)
 - [ ] Schedule Page (Different Views, sync with grade calculator)
+- [x] Admin Dashboard with cool info
+- [ ] Organize File System
+- [ ] Create Readme's for components
+- [ ] Study Guide / Flashcards
+- [ ] Admin Dashboard
+- [ ] Stats Dashboard?

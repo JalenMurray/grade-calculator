@@ -9,3 +9,7 @@ export const GPA = styled.span`
   color: ${(props) => props.theme.secondary};
   font-size: 1.4rem;
 `;
+
+export const ButtonContainer = styled.div`
+  margin-top: 30px;
+`;

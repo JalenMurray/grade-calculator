@@ -1,12 +1,17 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { formatFloat } from '../../utils/utils';
+import { createClass, getSemester } from '../../utils/api';
 
-// Components
-import { SemesterHeaderContainer, SemesterPageContainer, GPA } from './semester-page.styles';
+// Imported
+import { Row, Col, Container, Button } from 'react-bootstrap';
+import { AddCircleOutline } from '@mui/icons-material';
+
+// Custom
+import { SemesterHeaderContainer, GPA, ButtonContainer } from './semester-page.styles';
+import VModal from '../../components/v-modal/v-modal';
+import Form from '../../components/form/form';
 import { PageContainer, ContentContainer } from '../../components/basic-component.styles';
-import { Row, Col, Container } from 'react-bootstrap';
-import { getSemester } from '../../utils/api';
 import ClassCard from '../../components/semesters/class-card/class-card';
 
 const SemesterPage = () => {
@@ -14,6 +19,13 @@ const SemesterPage = () => {
   const [semester, setSemester] = useState({});
   const [colsPerRow, setColsPerRow] = useState(3);
   const [classGrid, setClassGrid] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [newClassForm, setNewClassForm] = useState({
+    code: '',
+    title: '',
+    units: 0,
+    desired_score: 70,
+  });
 
   useEffect(() => {
     const fetch = async () => {
@@ -42,6 +54,20 @@ const SemesterPage = () => {
     }
   }, [semester, colsPerRow]);
 
+  const handleAddClass = async (e) => {
+    e.preventDefault();
+    const newClass = { ...newClassForm, semester: id };
+    const data = await createClass(newClass);
+    const newClassList = [...semester.classes, data];
+    setSemester({ ...semester, classes: newClassList });
+    setModalOpen(false);
+  };
+
+  const handleAddClassChange = (e) => {
+    const { name, value } = e.target;
+    setNewClassForm({ ...newClassForm, [name]: value });
+  };
+
   return (
     <PageContainer>
       <SemesterHeaderContainer>
@@ -52,7 +78,13 @@ const SemesterPage = () => {
       </SemesterHeaderContainer>
       <Container fluid>
         <Row>
-          <Col lg="1"></Col>
+          <Col lg="1">
+            <ButtonContainer>
+              <Button variant="success" size="lg" onClick={() => setModalOpen(true)}>
+                <AddCircleOutline /> Add Class
+              </Button>
+            </ButtonContainer>
+          </Col>
           <Col lg="10">
             <ContentContainer>
               <Container fluid>
@@ -76,6 +108,46 @@ const SemesterPage = () => {
           <Col lg="1"></Col>
         </Row>
       </Container>
+      <VModal
+        show={modalOpen}
+        onHide={() => setModalOpen(false)}
+        header={'New Class'}
+        body={
+          <Form
+            formData={[
+              {
+                label: 'Code',
+                name: 'code',
+                value: newClassForm.code,
+                placeholder: 'Ex. CMSC101',
+                onChange: handleAddClassChange,
+              },
+              {
+                label: 'Title',
+                name: 'title',
+                value: newClassForm.title,
+                placeholder: 'Ex. Intro to Compute: Science',
+                onChange: handleAddClassChange,
+              },
+              {
+                label: 'Units/Credits',
+                name: 'units',
+                value: newClassForm.units,
+                type: 'number',
+                onChange: handleAddClassChange,
+              },
+              {
+                label: 'Desired Score',
+                name: 'desired_score',
+                value: newClassForm.desired_score,
+                type: 'number',
+                onChange: handleAddClassChange,
+              },
+            ]}
+            onSubmit={handleAddClass}
+          />
+        }
+      />
     </PageContainer>
   );
 };

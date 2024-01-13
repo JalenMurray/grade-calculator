@@ -6,7 +6,6 @@ import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
 // Routes
 import Navigation from './routes/navigation/navigation';
 import Home from './routes/home/home';
-import SignIn from './components/sign-in/sign-in';
 import SemesterPage from './routes/semester-page/semester-page';
 import ClassPage from './routes/class-page/class-page';
 import NotFound from './routes/not-found/not-found';
@@ -64,7 +63,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigation />}>
             <Route index element={<Home />} />
-            <Route path="auth" element={<SignIn />} />
             <Route path="/semester/:id" element={<SemesterPage />} />
             <Route path="/class/:id" element={<ClassPage />} />
             <Route path="/not_found" element={<NotFound />} />

@@ -54,3 +54,7 @@ export const SuccessMsg = styled.p`
   font-weight: bold;
   color: #63ff00;
 `;
+
+export const ClassName = styled.h1`
+  color: ${(props) => props.color};
+`;

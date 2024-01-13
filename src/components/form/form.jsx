@@ -20,16 +20,13 @@ const Form = ({ formData, onSubmit }) => {
     if (handleChange) {
       return handleChange(e);
     }
-    const { name, value } = e.target;
-    console.log(name, value);
+    const { value } = e.target;
     const newFormFields = formFields.map((field, j) => {
-      console.log(field);
       if (i === j) {
         return { ...field, value: value };
       }
       return field;
     });
-    console.log(newFormFields);
     setFormFields(newFormFields);
   };
 
@@ -39,7 +36,6 @@ const Form = ({ formData, onSubmit }) => {
         <Col lg="12"></Col>
         {formFields.map((field, i) => {
           const { label, name, value, onChange, ...otherProps } = field;
-          console.log(name, value);
           return (
             <Fragment key={i}>
               <Label htmlFor={name}>

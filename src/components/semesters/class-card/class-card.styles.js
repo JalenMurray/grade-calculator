@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 export const CardContainer = styled.div`
   padding: 10px;
@@ -41,7 +40,7 @@ export const InfoContainer = styled.div`
   height: 80%;
   width: 100%;
   text-align: center;
-  margin-top: 70px;
+  padding: 50px;
 `;
 
 export const DropdownOption = styled.span`

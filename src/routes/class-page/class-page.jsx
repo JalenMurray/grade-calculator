@@ -6,13 +6,13 @@ import { COLOR_ZONES, formatFloat } from '../../utils/utils';
 // Components
 import {
   ClassPageContainer,
-  AssignmentsContainer,
   ClassHeader,
   ButtonContainer,
   ButtonIconContainer,
   DesiredScoreContainer,
   DesiredScore,
   SuccessMsg,
+  ClassName,
 } from './class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
 import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
@@ -119,9 +119,9 @@ const ClassPage = () => {
     <ClassPageContainer className="text-dark m-4">
       <BackButton text={currentClass.semester_str} url={`/semester/${currentClass.semester}`} />
       <ClassHeader className="text-light">
-        <h1>
+        <ClassName color={currentClass.display_color}>
           {currentClass.code} {currentClass.title}
-        </h1>
+        </ClassName>
         <span className="text-secondary">{currentClass.semester_str}</span>
       </ClassHeader>
       <Container fluid>

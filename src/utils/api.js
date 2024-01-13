@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const BASE_URL = 'http://localhost:8000/classes/';
+export const BASE_URL = process.env.REACT_APP_API_URL;
 
 ///////////////////////////////////////
 //////// General Data Actions ////////

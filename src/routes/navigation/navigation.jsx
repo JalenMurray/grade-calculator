@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Container, Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 
 import Logo from '../../assets/grade_calculator_logo.png';
 import DefaultProfilePic from '../../assets/default_profile_pic.png';

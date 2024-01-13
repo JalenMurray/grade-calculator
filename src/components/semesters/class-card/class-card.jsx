@@ -1,10 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
-import { patchClass } from '../../../utils/api';
+import { destroyClass, patchClass } from '../../../utils/api';
 import { formatFloat } from '../../../utils/utils';
 
 // Imported
 import { ChromePicker } from 'react-color';
-import { MoreVertRounded } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 // Custom
@@ -45,6 +44,12 @@ const ClassCard = ({ cls }) => {
     }
   };
 
+  const handleDeleteClass = async (e) => {
+    e.preventDefault();
+    await destroyClass(cls.id);
+    window.location.reload();
+  };
+
   useEffect(() => {
     document.addEventListener('click', documentClickHandler);
 
@@ -59,7 +64,12 @@ const ClassCard = ({ cls }) => {
         <CardContainer color={color}>
           <OptionsContainer>
             <Dropdown
-              children={<DropdownOption onClick={handleDropdownOptionClick}>Edit Color</DropdownOption>}
+              children={
+                <Fragment>
+                  <DropdownOption onClick={handleDropdownOptionClick}>Edit Color</DropdownOption>
+                  <DropdownOption onClick={handleDeleteClass}>Delete {cls.code}</DropdownOption>
+                </Fragment>
+              }
               style={{ color: 'black', width: '100px' }}
             />
           </OptionsContainer>
