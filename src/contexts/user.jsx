@@ -1,12 +1,16 @@
 import { createContext, useState } from 'react';
+import { createUserDocumentFromAuth } from '../utils/firebase/firebase';
 
 export const UserContext = createContext({
-  currentUser: null,
-  setCurrentUser: () => null,
+  user: null,
+  setUser: () => null,
 });
 
 export const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const value = { currentUser, setCurrentUser };
+  const [user, setUser] = useState({});
+
+  const logout = () => {};
+
+  const value = { user, setUser };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

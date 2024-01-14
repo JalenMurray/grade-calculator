@@ -9,6 +9,7 @@ import Home from './routes/home/home';
 import SemesterPage from './routes/semester-page/semester-page';
 import ClassPage from './routes/class-page/class-page';
 import NotFound from './routes/not-found/not-found';
+import Semesters from './routes/semesters/semesters';
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -63,6 +64,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigation />}>
             <Route index element={<Home />} />
+            <Route path="/semester" element={<Semesters />} />
             <Route path="/semester/:id" element={<SemesterPage />} />
             <Route path="/class/:id" element={<ClassPage />} />
             <Route path="/not_found" element={<NotFound />} />

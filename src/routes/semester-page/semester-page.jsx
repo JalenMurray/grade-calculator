@@ -13,6 +13,7 @@ import VModal from '../../components/v-modal/v-modal';
 import Form from '../../components/form/form';
 import { PageContainer, ContentContainer } from '../../components/basic-component.styles';
 import ClassCard from '../../components/semesters/class-card/class-card';
+import BackButton from '../../components/back-button/back-button';
 
 const SemesterPage = () => {
   const { id } = useParams();
@@ -71,6 +72,7 @@ const SemesterPage = () => {
   return (
     <PageContainer>
       <SemesterHeaderContainer>
+        <BackButton text={'Semesters'} url={`/semester`} />
         <h1>
           {semester.season} {semester.year}
         </h1>

@@ -56,16 +56,22 @@ export const getUser = async (id) => {
   return data;
 };
 
-export const getUserClasses = async (id) => {
-  const url = `${BASE_URL}users/${id}`;
-  const user = await getData(url, `Error fetching user ${id}`);
-  return user ? user.classes : null;
+export const getUsers = async () => {
+  const url = `${BASE_URL}users/`;
+  const data = await getData(url, `Error fetching users`);
+  return data;
 };
 
 export const createUser = async (newUser) => {
   const url = `${BASE_URL}users/`;
   const data = await createData(url, newUser, 'Error creating new user');
   return data;
+};
+
+export const userExists = async (uid) => {
+  const users = await getUsers();
+  const foundUsers = users.filter((user) => user.uid === uid);
+  return foundUsers[0];
 };
 
 ///////////////////////////////////////
@@ -150,7 +156,7 @@ export const getSemester = async (id) => {
   return data;
 };
 
-export const createSemester = async (id, newSemester) => {
+export const createSemester = async (newSemester) => {
   const url = `${BASE_URL}semesters/`;
   const data = await createData(url, newSemester, `Error creating semester`);
   return data;
