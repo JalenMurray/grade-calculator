@@ -1,7 +1,6 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getClass, createAssignmentType, patchClass } from '../../utils/api';
 import { COLOR_ZONES, formatFloat } from '../../utils/utils';
+import { getClass } from '../../utils/api';
 
 // Components
 import {
@@ -13,19 +12,16 @@ import {
   DesiredScore,
   SuccessMsg,
   ClassName,
-} from './class-page.styles';
+} from '../class-page/class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
-import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
 import ProgressBar from '../../components/progress-bar/progress-bar';
 import Button from '../../components/button/button';
 import { Col, Container, Row } from 'react-bootstrap';
-import VModal from '../../components/v-modal/v-modal';
-import Form from '../../components/form/form';
 import { Share, ImportExport, AddCircleOutline, Edit, ColorLens } from '@mui/icons-material';
-import BackButton from '../../components/back-button/back-button';
 
 // Context
 import { ClassContext } from '../../contexts/class';
+import GuestAssignmentType from '../../components/guest-components/guest-assignment-type/guest-assignment-type';
 
 const getDesiredScoreColor = (distance) => {
   if (distance <= 5) {
@@ -41,23 +37,23 @@ const getDesiredScoreColor = (distance) => {
   }
 };
 
-const ClassPage = () => {
-  const { id } = useParams();
+const DEFAULT_CLASS = {
+  desired_score: 70,
+  score: 0,
+  assignmentTypes: [],
+};
+
+const GuestClass = () => {
   const { currentClass, setCurrentClass, updateClass, assignmentTypes, setAssignmentTypes, addAssignmentType } =
     useContext(ClassContext);
-  const navigate = useNavigate();
-  const [modalOpen, setModalOpen] = useState(false);
+  const [atId, setAtId] = useState(1);
   const [desiredScoreDistance, setDesiredScoreDistance] = useState(0);
   const [desiredScoreColor, setDesiredScoreColor] = useState('');
   const [desiredScoreMet, setDesiredScoreMet] = useState(false);
 
   useEffect(() => {
     const fetchClass = async () => {
-      const foundClass = await getClass(id);
-      if (!foundClass) {
-        navigate('/not_found');
-        return;
-      }
+      const foundClass = await getClass(41);
 
       const assignmentTypes = foundClass.assignment_types.reduce((acc, obj) => {
         acc[obj.id] = { ...obj };
@@ -68,18 +64,16 @@ const ClassPage = () => {
       console.log(foundClass);
     };
     fetchClass();
+
+    document.title = `Guest Class`;
+    return () => {
+      document.title = 'Grade Calculator';
+    };
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
-    document.title = `${currentClass.code} -- ${currentClass.semester_str}`;
-
-    return () => {
-      document.title = 'Grade Calculator';
-    };
-  }, [currentClass]);
-
-  useEffect(() => {
+    console.log('CURRENT CLASS UPDATED', currentClass);
     const newDistance = formatFloat(currentClass.desired_score - currentClass.score, 2);
     setDesiredScoreDistance(newDistance);
     setDesiredScoreColor(getDesiredScoreColor(newDistance));
@@ -91,40 +85,21 @@ const ClassPage = () => {
 
   const handleAddAssignmentType = async () => {
     const newAssignmentType = {
+      id: atId,
       name: 'New Assignment Type',
       max_score: 100,
       weight: 0,
-      class_associated: id,
+      class_associated: 41,
       default_name: 'Assignment',
       lock_weights: false,
       assignments: [],
     };
-    await createAssignmentType(newAssignmentType);
+    setAtId(atId + 1);
     addAssignmentType(newAssignmentType);
-  };
-
-  const handleEditClass = async (e) => {
-    e.preventDefault();
-    const patch = { name: currentClass.code, desired_score: currentClass.desired_score };
-    await patchClass(id, patch);
-    setModalOpen(false);
-  };
-
-  const handleChangeClass = async (e) => {
-    const { name, value } = e.target;
-    const toUpdate = { [name]: value };
-    updateClass(toUpdate);
   };
 
   return (
     <ClassPageContainer className="text-dark m-4">
-      <BackButton text={currentClass.semester_str} url={`/semester/${currentClass.semester}`} />
-      <ClassHeader className="text-light">
-        <ClassName color={currentClass.display_color}>
-          {currentClass.code} {currentClass.title}
-        </ClassName>
-        <span className="text-secondary">{currentClass.semester_str}</span>
-      </ClassHeader>
       <Container fluid>
         <Row>
           <Col lg="1">
@@ -137,12 +112,6 @@ const ClassPage = () => {
               {desiredScoreMet && <SuccessMsg>You have reached your desired score!</SuccessMsg>}
             </DesiredScoreContainer>
             <ButtonContainer>
-              <Button variant="secondary" className="text-light w-100" onClick={() => setModalOpen(true)}>
-                <ButtonIconContainer>
-                  <Edit />
-                </ButtonIconContainer>
-                Edit Class
-              </Button>
               <Button variant="success" className="text-light w-100" onClick={handleAddAssignmentType}>
                 <ButtonIconContainer>
                   <AddCircleOutline />
@@ -181,46 +150,14 @@ const ClassPage = () => {
                 <Col lg="2">Lost Points</Col>
               </Row>
               {assignmentTypes &&
-                Object.values(assignmentTypes).map((aType, i) => (
-                  <AssignmentType key={i} atId={aType.id} className="mb-4"></AssignmentType>
-                ))}
+                Object.values(assignmentTypes).map((aType, i) => <GuestAssignmentType key={i} atId={aType.id} />)}
             </ContentContainer>
           </Col>
           <Col lg="1">Something Else</Col>
         </Row>
       </Container>
-      <VModal
-        show={modalOpen}
-        onHide={() => setModalOpen(false)}
-        header={'Edit Class'}
-        body={
-          <Form
-            onSubmit={handleEditClass}
-            formData={[
-              {
-                label: 'Code',
-                name: 'code',
-                value: currentClass.code,
-                onChange: handleChangeClass,
-              },
-              {
-                label: 'Title',
-                name: 'title',
-                value: currentClass.title,
-                onChange: handleChangeClass,
-              },
-              {
-                label: 'Desired Score',
-                name: 'desired_score',
-                value: currentClass.desired_score,
-                onChange: handleChangeClass,
-              },
-            ]}
-          />
-        }
-      />
     </ClassPageContainer>
   );
 };
 
-export default ClassPage;
+export default GuestClass;

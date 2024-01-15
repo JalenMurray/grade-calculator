@@ -10,7 +10,7 @@ import { Row, Col, Container } from 'react-bootstrap';
 import AssignmentInput from '../assignment-input/assignment-input';
 import Dropdown from '../../dropdown/dropdown';
 
-const Assignment = ({ atId, aIdx }) => {
+const Assignment = ({ atId, aIdx, guest }) => {
   const { assignmentTypes, updateAssignment, removeAssignment } = useContext(ClassContext);
   const [assignment, setAssignment] = useState({});
   const [id, setId] = useState(0);
@@ -89,7 +89,9 @@ const Assignment = ({ atId, aIdx }) => {
   };
 
   const handleDelete = async () => {
-    await destroyAssignment(id);
+    if (!guest) {
+      await destroyAssignment(id);
+    }
     removeAssignment(atId, aIdx);
   };
 
@@ -103,6 +105,7 @@ const Assignment = ({ atId, aIdx }) => {
             name={'name'}
             value={name || ''}
             onChange={handleStringChange}
+            guest={guest}
           />
         </Col>
         <Col lg="4">
@@ -114,6 +117,7 @@ const Assignment = ({ atId, aIdx }) => {
                 name={'score'}
                 value={score || 0.0}
                 onChange={handleFloatChange}
+                guest={guest}
               />
             </Col>
             <Col lg="3">/</Col>
@@ -124,6 +128,7 @@ const Assignment = ({ atId, aIdx }) => {
                 name={'max_score'}
                 value={maxScore || 0.0}
                 onChange={handleFloatChange}
+                guest={guest}
               />
             </Col>
           </Row>
@@ -137,6 +142,7 @@ const Assignment = ({ atId, aIdx }) => {
               name={'weight'}
               value={weight || 0.0}
               onChange={handleFloatChange}
+              guest={guest}
             />
           )}
         </Col>

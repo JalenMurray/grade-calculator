@@ -10,6 +10,7 @@ import SemesterPage from './routes/semester-page/semester-page';
 import ClassPage from './routes/class-page/class-page';
 import NotFound from './routes/not-found/not-found';
 import Semesters from './routes/semesters/semesters';
+import GuestClass from './routes/guest-class/guest-class';
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -68,6 +69,7 @@ const App = () => {
             <Route path="/semester/:id" element={<SemesterPage />} />
             <Route path="/class/:id" element={<ClassPage />} />
             <Route path="/not_found" element={<NotFound />} />
+            <Route path="/class/guest" element={<GuestClass />} />
           </Route>
         </Routes>
       </AppContainer>

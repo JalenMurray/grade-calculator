@@ -35,7 +35,7 @@ const Semesters = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userData = await getUser(user.id);
+      const userData = await getUser(2);
       setName(userData.display_name);
       setSemesters(sortSemesters(userData.semesters));
     };

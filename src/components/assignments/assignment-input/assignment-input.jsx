@@ -9,7 +9,7 @@ const INPUT_TYPE_PROPS = {
   text: { type: 'text' },
 };
 
-const AssignmentInput = ({ assignmentId, inputType, ...otherProps }) => {
+const AssignmentInput = ({ assignmentId, inputType, guest, ...otherProps }) => {
   const [typeProps, setTypeProps] = useState({});
 
   useEffect(() => {
@@ -18,8 +18,10 @@ const AssignmentInput = ({ assignmentId, inputType, ...otherProps }) => {
   }, [inputType]);
 
   const handleBlur = async (e) => {
-    const { name, value } = e.target;
-    await patchAssignment(assignmentId, { [name]: value });
+    if (!guest) {
+      const { name, value } = e.target;
+      await patchAssignment(assignmentId, { [name]: value });
+    }
   };
 
   return <ClickableInput input={'light'} header={'darkSpan'} blur={handleBlur} {...typeProps} {...otherProps} />;
