@@ -8,9 +8,6 @@ import {
   ClassHeader,
   ButtonContainer,
   ButtonIconContainer,
-  DesiredScoreContainer,
-  DesiredScore,
-  SuccessMsg,
   ClassName,
 } from '../class-page/class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
@@ -18,38 +15,16 @@ import ProgressBar from '../../components/progress-bar/progress-bar';
 import Button from '../../components/button/button';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Share, ImportExport, AddCircleOutline, Edit, ColorLens } from '@mui/icons-material';
+import DesiredScoreShowcase from '../../components/class/desired-score/desired-score';
+import GuestAssignmentType from '../../components/guest-components/guest-assignment-type/guest-assignment-type';
 
 // Context
 import { ClassContext } from '../../contexts/class';
-import GuestAssignmentType from '../../components/guest-components/guest-assignment-type/guest-assignment-type';
-
-const getDesiredScoreColor = (distance) => {
-  if (distance <= 5) {
-    return COLOR_ZONES[4];
-  } else if (distance <= 7.5) {
-    return COLOR_ZONES[3];
-  } else if (distance <= 10) {
-    return COLOR_ZONES[2];
-  } else if (distance <= 12.5) {
-    return COLOR_ZONES[1];
-  } else {
-    return COLOR_ZONES[0];
-  }
-};
-
-const DEFAULT_CLASS = {
-  desired_score: 70,
-  score: 0,
-  assignmentTypes: [],
-};
 
 const GuestClass = () => {
   const { currentClass, setCurrentClass, updateClass, assignmentTypes, setAssignmentTypes, addAssignmentType } =
     useContext(ClassContext);
   const [atId, setAtId] = useState(1);
-  const [desiredScoreDistance, setDesiredScoreDistance] = useState(0);
-  const [desiredScoreColor, setDesiredScoreColor] = useState('');
-  const [desiredScoreMet, setDesiredScoreMet] = useState(false);
 
   useEffect(() => {
     const fetchClass = async () => {
@@ -72,17 +47,6 @@ const GuestClass = () => {
     // eslint-disable-next-line
   }, []);
 
-  useEffect(() => {
-    console.log('CURRENT CLASS UPDATED', currentClass);
-    const newDistance = formatFloat(currentClass.desired_score - currentClass.score, 2);
-    setDesiredScoreDistance(newDistance);
-    setDesiredScoreColor(getDesiredScoreColor(newDistance));
-  }, [currentClass]);
-
-  useEffect(() => {
-    setDesiredScoreMet(desiredScoreDistance <= 0);
-  }, [desiredScoreDistance]);
-
   const handleAddAssignmentType = async () => {
     const newAssignmentType = {
       id: atId,
@@ -103,14 +67,7 @@ const GuestClass = () => {
       <Container fluid>
         <Row>
           <Col lg="1">
-            <DesiredScoreContainer>
-              {!desiredScoreMet && (
-                <Fragment>
-                  <DesiredScore color={desiredScoreColor}>{desiredScoreDistance}%</DesiredScore>to Desired Score
-                </Fragment>
-              )}
-              {desiredScoreMet && <SuccessMsg>You have reached your desired score!</SuccessMsg>}
-            </DesiredScoreContainer>
+            <DesiredScoreShowcase desiredScore={currentClass.desired_score} score={currentClass.score} />
             <ButtonContainer>
               <Button variant="success" className="text-light w-100" onClick={handleAddAssignmentType}>
                 <ButtonIconContainer>

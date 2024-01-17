@@ -10,11 +10,11 @@ Still WIP
 - [x] Add functionality for Creating new assignment types
 - [ ] Add warning at top of page and possibly to API.
 - [ ] Add functionality for Logging in and authentication for that.
-- [ ] Add functionality for a Class List dashboard
-- [ ] Allow Creating new classes
-- [ ] Allow Possibly Guest Classes
-- [ ] Desired Grade
-- [ ] Semester Dashboard
+- [x] Add functionality for a Class List dashboard
+- [x] Allow Creating new classes
+- [x] Allow Possibly Guest Classes
+- [x] Desired Grade
+- [x] Semester Dashboard
 - [ ] Current Semester tracker
 - [ ] Semester and Total GPA
 - [ ] Ability to use points instead of weights.

@@ -1,32 +1,5 @@
 import styled from 'styled-components';
 
-export const ClassPageContainer = styled.div`
-  width: 98%;
-  min-height: 1920px;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-`;
-
-export const AssignmentsContainer = styled.div`
-  width: 100%;
-  height: 90%;
-  border-radius: 15px;
-  padding: 2rem;
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-`;
-
-export const ButtonContainer = styled.div`
-  margin-top: 50px;
-`;
-
-export const ButtonIconContainer = styled.span`
-  margin-right: 10px;
-`;
-
 export const DesiredScoreContainer = styled.div`
   border-radius: 15px;
   color: ${(props) => props.theme.light};

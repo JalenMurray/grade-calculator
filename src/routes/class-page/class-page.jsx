@@ -4,16 +4,7 @@ import { getClass, createAssignmentType, patchClass } from '../../utils/api';
 import { COLOR_ZONES, formatFloat } from '../../utils/utils';
 
 // Components
-import {
-  ClassPageContainer,
-  ClassHeader,
-  ButtonContainer,
-  ButtonIconContainer,
-  DesiredScoreContainer,
-  DesiredScore,
-  SuccessMsg,
-  ClassName,
-} from './class-page.styles';
+import { ClassPageContainer, ButtonContainer, ButtonIconContainer } from './class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
 import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
 import ProgressBar from '../../components/progress-bar/progress-bar';
@@ -23,23 +14,11 @@ import VModal from '../../components/v-modal/v-modal';
 import Form from '../../components/form/form';
 import { Share, ImportExport, AddCircleOutline, Edit, ColorLens } from '@mui/icons-material';
 import BackButton from '../../components/back-button/back-button';
+import DesiredScoreShowcase from '../../components/class/desired-score/desired-score';
+import ClassHeader from '../../components/class/class-header/class-header';
 
 // Context
 import { ClassContext } from '../../contexts/class';
-
-const getDesiredScoreColor = (distance) => {
-  if (distance <= 5) {
-    return COLOR_ZONES[4];
-  } else if (distance <= 7.5) {
-    return COLOR_ZONES[3];
-  } else if (distance <= 10) {
-    return COLOR_ZONES[2];
-  } else if (distance <= 12.5) {
-    return COLOR_ZONES[1];
-  } else {
-    return COLOR_ZONES[0];
-  }
-};
 
 const ClassPage = () => {
   const { id } = useParams();
@@ -47,9 +26,6 @@ const ClassPage = () => {
     useContext(ClassContext);
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
-  const [desiredScoreDistance, setDesiredScoreDistance] = useState(0);
-  const [desiredScoreColor, setDesiredScoreColor] = useState('');
-  const [desiredScoreMet, setDesiredScoreMet] = useState(false);
 
   useEffect(() => {
     const fetchClass = async () => {
@@ -78,16 +54,6 @@ const ClassPage = () => {
       document.title = 'Grade Calculator';
     };
   }, [currentClass]);
-
-  useEffect(() => {
-    const newDistance = formatFloat(currentClass.desired_score - currentClass.score, 2);
-    setDesiredScoreDistance(newDistance);
-    setDesiredScoreColor(getDesiredScoreColor(newDistance));
-  }, [currentClass]);
-
-  useEffect(() => {
-    setDesiredScoreMet(desiredScoreDistance <= 0);
-  }, [desiredScoreDistance]);
 
   const handleAddAssignmentType = async () => {
     const newAssignmentType = {
@@ -118,24 +84,15 @@ const ClassPage = () => {
 
   return (
     <ClassPageContainer className="text-dark m-4">
-      <BackButton text={currentClass.semester_str} url={`/semester/${currentClass.semester}`} />
-      <ClassHeader className="text-light">
-        <ClassName color={currentClass.display_color}>
-          {currentClass.code} {currentClass.title}
-        </ClassName>
-        <span className="text-secondary">{currentClass.semester_str}</span>
-      </ClassHeader>
+      <ClassHeader
+        headerStr={`${currentClass.code} ${currentClass.title}`}
+        semester={{ id: currentClass.semester, str: currentClass.semester_str }}
+        color={currentClass.display_color}
+      />
       <Container fluid>
         <Row>
           <Col lg="1">
-            <DesiredScoreContainer>
-              {!desiredScoreMet && (
-                <Fragment>
-                  <DesiredScore color={desiredScoreColor}>{desiredScoreDistance}%</DesiredScore>to Desired Score
-                </Fragment>
-              )}
-              {desiredScoreMet && <SuccessMsg>You have reached your desired score!</SuccessMsg>}
-            </DesiredScoreContainer>
+            <DesiredScoreShowcase desiredScore={currentClass.desired_score} score={currentClass.score} />
             <ButtonContainer>
               <Button variant="secondary" className="text-light w-100" onClick={() => setModalOpen(true)}>
                 <ButtonIconContainer>
@@ -182,7 +139,7 @@ const ClassPage = () => {
               </Row>
               {assignmentTypes &&
                 Object.values(assignmentTypes).map((aType, i) => (
-                  <AssignmentType key={i} atId={aType.id} className="mb-4"></AssignmentType>
+                  <AssignmentType key={i} atId={aType.id} className="mb-4" />
                 ))}
             </ContentContainer>
           </Col>
