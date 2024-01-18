@@ -14,7 +14,6 @@ export const ClassProvider = ({ children }) => {
   const [assignmentTypes, setAssignmentTypes] = useState({});
 
   useEffect(() => {
-    console.log('ASSIGNMENT TYPES', Object.values(assignmentTypes));
     const newScore = Object.values(assignmentTypes).reduce((acc, at) => {
       const { total, max } = getAtScores(at.assignments);
       return acc + total;
@@ -27,7 +26,6 @@ export const ClassProvider = ({ children }) => {
 
   const updateClass = (toUpdate) => {
     const updatedClass = { ...currentClass, ...toUpdate };
-    console.log('updated class', updatedClass);
     setCurrentClass(updatedClass);
   };
 
@@ -102,9 +100,7 @@ export const ClassProvider = ({ children }) => {
   };
 
   const addAssignmentType = (newAssignmentType) => {
-    console.log('ADDING ASSIGNMENT TYPE');
     const id = newAssignmentType.id;
-    console.log('NEW ASSIGNMENT TYPES', { ...assignmentTypes, [id]: newAssignmentType });
     setAssignmentTypes({ ...assignmentTypes, [id]: newAssignmentType });
   };
 
@@ -121,7 +117,6 @@ export const ClassProvider = ({ children }) => {
       updatedAssignmentType = { ...currAssignmentType, assignments: updatedAssignments, [name]: value };
     } else if (name === 'lock_weights') {
       const updatedAssignments = getBalancedWeights(id, currAssignmentType.assignments);
-      console.log('UPDATED_ASSIGNMENTS', updatedAssignments);
       updatedAssignmentType = { ...currAssignmentType, assignments: updatedAssignments, [name]: value };
     } else {
       updatedAssignmentType = { ...currAssignmentType, [name]: value };

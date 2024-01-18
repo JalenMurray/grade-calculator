@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import './colors.scss';
 
 import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
@@ -11,6 +11,8 @@ import ClassPage from './routes/class-page/class-page';
 import NotFound from './routes/not-found/not-found';
 import Semesters from './routes/semesters/semesters';
 import GuestClass from './routes/guest-class/guest-class';
+import { useContext, useEffect } from 'react';
+import { UserContext } from './contexts/user';
 
 const GlobalStyle = createGlobalStyle`
 * {
@@ -57,6 +59,21 @@ const AppContainer = styled.div`
   width: 100%;
 `;
 
+const InitialRedirect = () => {
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user.current_semester) {
+      navigate(`/semester/${user.current_semester.id}`);
+    } else {
+      navigate('/home');
+    }
+  }, []);
+
+  return null;
+};
+
 const App = () => {
   return (
     <ThemeProvider theme={ColorTheme}>
@@ -64,7 +81,8 @@ const App = () => {
       <AppContainer>
         <Routes>
           <Route path="/" element={<Navigation />}>
-            <Route index element={<Home />} />
+            <Route index element={<InitialRedirect />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/semester" element={<Semesters />} />
             <Route path="/semester/:id" element={<SemesterPage />} />
             <Route path="/class/:id" element={<ClassPage />} />

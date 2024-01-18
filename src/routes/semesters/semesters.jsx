@@ -34,13 +34,11 @@ const Semesters = () => {
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await getUser(2);
-      setName(userData.display_name);
-      setSemesters(sortSemesters(userData.semesters));
-    };
-    fetchUser();
-  }, []);
+    if (user.display_name) {
+      setName(user.display_name);
+      setSemesters(sortSemesters(user.semesters));
+    }
+  }, [user]);
 
   const handleAddSemester = async (e) => {
     e.preventDefault();

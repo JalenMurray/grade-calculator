@@ -7,7 +7,7 @@ import { COLOR_ZONES, formatFloat } from '../../utils/utils';
 import { ClassPageContainer, ButtonContainer, ButtonIconContainer } from './class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
 import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
-import ProgressBar from '../../components/progress-bar/progress-bar';
+import ProgressBar from '../../components/class/progress-bar/progress-bar';
 import Button from '../../components/button/button';
 import { Col, Container, Row } from 'react-bootstrap';
 import VModal from '../../components/v-modal/v-modal';

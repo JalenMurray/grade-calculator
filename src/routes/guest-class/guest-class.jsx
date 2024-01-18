@@ -11,7 +11,7 @@ import {
   ClassName,
 } from '../class-page/class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
-import ProgressBar from '../../components/progress-bar/progress-bar';
+import ProgressBar from '../../components/class/progress-bar/progress-bar';
 import Button from '../../components/button/button';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Share, ImportExport, AddCircleOutline, Edit, ColorLens } from '@mui/icons-material';

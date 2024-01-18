@@ -56,6 +56,12 @@ export const getUser = async (id) => {
   return data;
 };
 
+export const getUserAuth = async (auth) => {
+  const users = await getUsers();
+  const foundUsers = users.filter((user) => user.auth_token === auth);
+  return foundUsers[0];
+};
+
 export const getUsers = async () => {
   const url = `${BASE_URL}users/`;
   const data = await getData(url, `Error fetching users`);
@@ -72,6 +78,12 @@ export const userExists = async (uid) => {
   const users = await getUsers();
   const foundUsers = users.filter((user) => user.uid === uid);
   return foundUsers[0];
+};
+
+export const patchUser = async (id, toUpdate) => {
+  const url = `${BASE_URL}users/${id}/`;
+  const patched = await patchData(url, toUpdate, `Error Updating User`);
+  return patched;
 };
 
 ///////////////////////////////////////

@@ -1,7 +1,7 @@
 import { BarContainer, Progress, ProgressNum } from './progress-bar.styles';
 
 import { useState, useEffect } from 'react';
-import { COLOR_ZONES } from '../../utils/utils';
+import { COLOR_ZONES } from '../../../utils/utils';
 
 const ProgressBar = ({ percentage }) => {
   const [percent, setPercent] = useState(0);

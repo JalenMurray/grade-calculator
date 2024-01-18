@@ -1,5 +1,7 @@
-import { Fragment } from 'react';
+import { Fragment, useContext, useEffect } from 'react';
 import { FEATURES } from '../../utils/utils';
+import { getUserAuth } from '../../utils/api';
+import { signInWithGoogleRedirect } from '../../utils/firebase/firebase';
 
 // Components
 import {
@@ -14,22 +16,35 @@ import {
 } from './home.styles';
 import { Row, Col } from 'react-bootstrap';
 import Carousel from '../../components/carousel/carousel';
+import { UserContext } from '../../contexts/user';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const { user, setUser } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    if (user.current_semester) {
+      navigate(`/semester/${user.current_semester.id}`);
+    } else {
+      signInWithGoogleRedirect();
+    }
+  };
+
   return (
     <Fragment>
       <SiteNameContainer>
         <SiteName>Grade Master</SiteName>
         <Description>Your go-to tool for tracking assignments, calculating grades, and more!</Description>
         <HeaderButtonContainer>
-          <HeaderButton variant="secondary" size="lg">
-            Use as a Guest
-          </HeaderButton>
-          <a href="/semester/2">
-            <HeaderButton variant="primary" size="lg">
-              Login
+          <a href="/class/guest">
+            <HeaderButton variant="secondary" size="lg">
+              Use as a Guest
             </HeaderButton>
           </a>
+          <HeaderButton variant="primary" size="lg" onClick={handleLogin}>
+            Login
+          </HeaderButton>
         </HeaderButtonContainer>
       </SiteNameContainer>
       <FeaturesContainer>
