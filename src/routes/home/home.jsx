@@ -42,7 +42,7 @@ const Home = () => {
               Use as a Guest
             </HeaderButton>
           </a>
-          <HeaderButton variant="primary" size="lg" onClick={handleLogin}>
+          <HeaderButton variant="info" size="lg" onClick={handleLogin}>
             Login
           </HeaderButton>
         </HeaderButtonContainer>

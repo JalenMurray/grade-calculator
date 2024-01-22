@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useContext } from 'react';
+import { Fragment, useEffect, useContext, useState, useRef } from 'react';
 import { getRedirectResult } from 'firebase/auth';
 import {
   auth,
@@ -16,6 +16,7 @@ import { NavLinkText } from './navigation.styles';
 import ProfilePicture from '../../components/profile-picture/profile-picture';
 import { createUser, getUserAuth, patchUser, userExists } from '../../utils/api';
 import { UserContext } from '../../contexts/user';
+import { Content, Menu } from '../../components/dropdown/dropdown.styles';
 
 const DEFAULT_PIC_PROPS = {
   img: DefaultProfilePic,
@@ -27,6 +28,8 @@ const DEFAULT_PIC_PROPS = {
 const Navigation = () => {
   const { user, setUser } = useContext(UserContext);
   const [cookies, setCookie, removeCookie] = useCookies(['auth']);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchUser = async (token) => {
@@ -66,6 +69,30 @@ const Navigation = () => {
     getRedirectUser();
   }, []);
 
+  const handleLogout = () => {
+    removeCookie('auth');
+    setUser({});
+  };
+
+  const toggleDropdown = (e) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
+
+  const closeDropDownOnOutsideClick = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', closeDropDownOnOutsideClick);
+
+    return () => {
+      document.removeEventListener('click', closeDropDownOnOutsideClick);
+    };
+  }, []);
+
   return (
     <Fragment>
       <Navbar data-bs-theme="light" style={{ background: '#829191' }}>
@@ -80,12 +107,33 @@ const Navigation = () => {
           />
         </Navbar.Brand>
         <Nav className="me-auto text-lg">
-          <Nav.Link href="/class/1">
+          <Nav.Link href="/semester">
             <NavLinkText>Semesters</NavLinkText>
           </Nav.Link>
+          {user.current_semester && (
+            <Nav.Link href={`/semester/${user.current_semester.id}`}>
+              <NavLinkText>Current Semester</NavLinkText>
+            </Nav.Link>
+          )}
         </Nav>
-        {!user && <ProfilePicture {...DEFAULT_PIC_PROPS} />}
-        {user && <ProfilePicture style={{ cursor: 'pointer' }} img={user.photo_url} alt={user.display_name} />}
+        {!user.photo_url && <ProfilePicture {...DEFAULT_PIC_PROPS} />}
+        {user.photo_url && (
+          <Menu ref={dropdownRef}>
+            <ProfilePicture
+              style={{ cursor: 'pointer' }}
+              img={user.photo_url}
+              alt={user.display_name}
+              onClick={toggleDropdown}
+            />
+            {isOpen && (
+              <Content style={{ paddingRight: '10px' }}>
+                <span className="text-dark" onClick={handleLogout}>
+                  Logout
+                </span>
+              </Content>
+            )}
+          </Menu>
+        )}
       </Navbar>
       <Outlet />
     </Fragment>

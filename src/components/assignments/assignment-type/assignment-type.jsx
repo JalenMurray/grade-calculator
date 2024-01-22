@@ -17,7 +17,7 @@ import Dropdown from '../../dropdown/dropdown';
 import ClickableInput from '../../clickable-input/clickable-input';
 import AssignmentTypeHeader from '../assignment-type-header/assignment-type-header';
 
-const AssignmentType = ({ atId }) => {
+const AssignmentType = ({ atId, guest }) => {
   const { assignmentTypes, addAssignment, updateAssignmentType, deleteAssignmentType } = useContext(ClassContext);
   const [assignmentType, setAssignmentType] = useState({});
   const [lostPoints, setLostPoints] = useState(0.0);
@@ -32,10 +32,10 @@ const AssignmentType = ({ atId }) => {
 
   return (
     <AssignmentsContainer>
-      <AssignmentTypeHeader at={assignmentType} guest={false} />
+      <AssignmentTypeHeader at={assignmentType} lostPoints={lostPoints} guest={guest} />
       {assignmentType.assignments &&
         assignmentType.assignments.map((assignment, i) => (
-          <Assignment key={i} atId={assignmentType.id} aIdx={i} guest={false} />
+          <Assignment key={i} atId={assignmentType.id} aIdx={i} guest={guest} />
         ))}
     </AssignmentsContainer>
   );

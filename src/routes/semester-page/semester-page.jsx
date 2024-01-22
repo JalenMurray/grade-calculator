@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { formatFloat } from '../../utils/utils';
 import { createClass, getSemester } from '../../utils/api';
+import { UserContext } from '../../contexts/user';
 
 // Imported
 import { Row, Col, Container, Button } from 'react-bootstrap';
@@ -14,9 +15,11 @@ import Form from '../../components/form/form';
 import { PageContainer, ContentContainer } from '../../components/basic-component.styles';
 import ClassCard from '../../components/semesters/class-card/class-card';
 import BackButton from '../../components/back-button/back-button';
+import Unauthorized from '../../components/unauthorized/unauthorized';
 
 const SemesterPage = () => {
   const { id } = useParams();
+  const { user } = useContext(UserContext);
   const [semester, setSemester] = useState({});
   const [colsPerRow, setColsPerRow] = useState(3);
   const [classGrid, setClassGrid] = useState([]);
@@ -27,6 +30,8 @@ const SemesterPage = () => {
     units: 0,
     desired_score: 70,
   });
+  const [authorized, setAuthorized] = useState(null);
+  const [authMsg, setAuthMsg] = useState('');
 
   useEffect(() => {
     const fetch = async () => {
@@ -34,7 +39,18 @@ const SemesterPage = () => {
       setSemester(data);
     };
     fetch();
-  }, [id]);
+  }, []);
+
+  useEffect(() => {
+    if (user.id === semester.user) {
+      setAuthorized(true);
+    } else {
+      console.log('setting false');
+      setAuthorized(false);
+      const msg = user.id ? 'You do not have access to this semester' : 'You must be logged in to view this page';
+      setAuthMsg(msg);
+    }
+  }, [user, semester]);
 
   useEffect(() => {
     document.title = `${semester.season} ${semester.year}`;
@@ -57,7 +73,7 @@ const SemesterPage = () => {
 
   const handleAddClass = async (e) => {
     e.preventDefault();
-    const newClass = { ...newClassForm, semester: id };
+    const newClass = { ...newClassForm, semester: id, user: semester.user };
     const data = await createClass(newClass);
     const newClassList = [...semester.classes, data];
     setSemester({ ...semester, classes: newClassList });
@@ -69,7 +85,11 @@ const SemesterPage = () => {
     setNewClassForm({ ...newClassForm, [name]: value });
   };
 
-  return (
+  if (authorized == null) {
+    return <PageContainer></PageContainer>;
+  }
+
+  return authorized ? (
     <PageContainer>
       <SemesterHeaderContainer>
         <BackButton text={'Semesters'} url={`/semester`} />
@@ -151,6 +171,8 @@ const SemesterPage = () => {
         }
       />
     </PageContainer>
+  ) : (
+    <Unauthorized msg={authMsg} />
   );
 };
 

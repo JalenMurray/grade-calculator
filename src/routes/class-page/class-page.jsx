@@ -4,6 +4,7 @@ import { getClass, createAssignmentType, patchClass } from '../../utils/api';
 import { COLOR_ZONES, formatFloat } from '../../utils/utils';
 
 // Components
+import { PageContainer } from '../../components/basic-component.styles';
 import { ClassPageContainer, ButtonContainer, ButtonIconContainer } from './class-page.styles';
 import { ContentContainer } from '../../components/basic-component.styles';
 import AssignmentType from '../../components/assignments/assignment-type/assignment-type';
@@ -19,13 +20,19 @@ import ClassHeader from '../../components/class/class-header/class-header';
 
 // Context
 import { ClassContext } from '../../contexts/class';
+import { UserContext } from '../../contexts/user';
+import Unauthorized from '../../components/unauthorized/unauthorized';
+import GradeCalculator from '../../components/class/grade-calculator/grade-calculator';
 
 const ClassPage = () => {
   const { id } = useParams();
   const { currentClass, setCurrentClass, updateClass, assignmentTypes, setAssignmentTypes, addAssignmentType } =
     useContext(ClassContext);
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  const [authorized, setAuthorized] = useState(null);
+  const [authMsg, setAuthMsg] = useState('');
 
   useEffect(() => {
     const fetchClass = async () => {
@@ -48,10 +55,21 @@ const ClassPage = () => {
   }, []);
 
   useEffect(() => {
+    if (user.id === currentClass.user) {
+      setAuthorized(true);
+    } else {
+      console.log('setting false');
+      setAuthorized(false);
+      const msg = user.id ? 'You do not have access to this class' : 'You must be logged in to view this page';
+      setAuthMsg(msg);
+    }
+  }, [user, currentClass]);
+
+  useEffect(() => {
     document.title = `${currentClass.code} -- ${currentClass.semester_str}`;
 
     return () => {
-      document.title = 'Grade Calculator';
+      document.title = 'Grade Master';
     };
   }, [currentClass]);
 
@@ -82,7 +100,11 @@ const ClassPage = () => {
     updateClass(toUpdate);
   };
 
-  return (
+  if (authorized == null) {
+    return <PageContainer></PageContainer>;
+  }
+
+  return authorized ? (
     <ClassPageContainer className="text-dark m-4">
       <ClassHeader
         headerStr={`${currentClass.code} ${currentClass.title}`}
@@ -129,19 +151,14 @@ const ClassPage = () => {
           </Col>
           <Col lg="10">
             <ProgressBar percentage={currentClass.score} />
-            <ContentContainer>
-              <Row className="pb-4">
-                <Col lg="2">Name</Col>
-                <Col lg="4">Scores</Col>
-                <Col lg="2">Weight</Col>
-                <Col lg="2">Weighted Score</Col>
-                <Col lg="2">Lost Points</Col>
-              </Row>
+            <GradeCalculator assignmentTypes={assignmentTypes} />
+            {/* <ContentContainer>
+              
               {assignmentTypes &&
                 Object.values(assignmentTypes).map((aType, i) => (
                   <AssignmentType key={i} atId={aType.id} className="mb-4" />
                 ))}
-            </ContentContainer>
+            </ContentContainer> */}
           </Col>
           <Col lg="1">Something Else</Col>
         </Row>
@@ -177,6 +194,8 @@ const ClassPage = () => {
         }
       />
     </ClassPageContainer>
+  ) : (
+    <Unauthorized msg={authMsg} />
   );
 };
 

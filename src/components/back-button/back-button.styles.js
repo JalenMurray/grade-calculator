@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 export const BackButtonContainer = styled(Link)`
   text-decoration: none;
   margin-left: 0;
+  width: fit-content;
 `;
 
 export const BackButtonText = styled.h4`

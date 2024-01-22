@@ -10,7 +10,7 @@ import { createAssignment, destroyAssignmentType, patchAssignmentType } from '..
 import VModal from '../../v-modal/v-modal';
 import Form from '../../form/form';
 
-const AssignmentTypeHeader = ({ at, guest }) => {
+const AssignmentTypeHeader = ({ at, lostPoints, guest }) => {
   const { updateAssignmentType, addAssignment, deleteAssignmentType } = useContext(ClassContext);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -92,12 +92,10 @@ const AssignmentTypeHeader = ({ at, guest }) => {
           {!at.lock_weights && <h4>{at.weight}</h4>}
         </DynamicValueContaier>
         <DynamicValueContaier lg="2">
-          <h4>
-            {at.total_score} / {at.max_total_score}
-          </h4>
+          <h4>{formatFloat(at.total_score / at.max_total_score, 2)}</h4>
         </DynamicValueContaier>
         <DynamicValueContaier lg="1">
-          <h4>0</h4>
+          <h4>{formatFloat(lostPoints, 2)}</h4>
         </DynamicValueContaier>
         <Col lg="1">
           <Dropdown

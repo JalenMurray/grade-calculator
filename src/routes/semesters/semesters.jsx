@@ -11,6 +11,7 @@ import { PageContainer, ContentContainer } from '../../components/basic-componen
 import SemesterCard from '../../components/semesters/semester-card/semester-card';
 import VModal from '../../components/v-modal/v-modal';
 import { UserContext } from '../../contexts/user';
+import Unauthorized from '../../components/unauthorized/unauthorized';
 
 const Semesters = () => {
   const { user } = useContext(UserContext);
@@ -21,6 +22,8 @@ const Semesters = () => {
     year: new Date().getFullYear(),
   });
   const [modalOpen, setModalOpen] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
+  const [authMsg, setAuthMsg] = useState('');
 
   const sortSemesters = (semesters) => {
     return semesters.sort((a, b) => {
@@ -35,8 +38,11 @@ const Semesters = () => {
 
   useEffect(() => {
     if (user.display_name) {
+      setAuthorized(true);
       setName(user.display_name);
       setSemesters(sortSemesters(user.semesters));
+    } else {
+      setAuthMsg('You must be logged in to view this page');
     }
   }, [user]);
 
@@ -52,10 +58,12 @@ const Semesters = () => {
 
   const handleSemesterAddChange = (e) => {
     const { name, value } = e.target;
-    console.log(e);
-    console.log('NEW FORM', { ...newSemesterForm, [name]: value });
     setNewSemesterForm({ ...newSemesterForm, [name]: value });
   };
+
+  if (!authorized) {
+    return <Unauthorized msg={authMsg} />;
+  }
 
   return (
     <PageContainer>
